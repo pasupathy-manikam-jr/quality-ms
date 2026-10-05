@@ -7,9 +7,12 @@
             <flux:subheading>{{ __('Inspections done against approved plans, with every reading and the gauge it was taken with.') }}</flux:subheading>
         </div>
 
-        @can('create-inspections')
+        <div class="flex flex-wrap gap-2">
+            <flux:button icon="arrow-down-tray" wire:click="export">{{ __('Export') }}</flux:button>
+            @can('create-inspections')
             <flux:button variant="primary" icon="plus" wire:click="create">{{ __('Start inspection') }}</flux:button>
-        @endcan
+            @endcan
+        </div>
     </div>
 
     <div class="flex flex-wrap gap-2" role="tablist">

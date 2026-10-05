@@ -7,15 +7,18 @@ use App\Livewire\Forms\NcrForm;
 use App\Models\Ncr;
 use App\Models\Part;
 use App\Models\Supplier;
+use App\Support\Decimal;
 use Flux\Flux;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * @property-read Collection<int, Part> $parts
@@ -60,11 +63,7 @@ class Index extends Component
     #[Computed]
     public function ncrs(): LengthAwarePaginator
     {
-        $query = $this->filtered()
-            ->with(['part:id,part_number,revision', 'supplier:id,name'])
-            ->when(in_array($this->status, Ncr::STATUSES, true), fn (Builder $q) => $q->where('status', $this->status));
-
-        return $this->paginateTable($query, self::SEARCHABLE, ['number', 'created_at'], 'created_at');
+        return $this->paginateTable($this->listQuery(), self::SEARCHABLE, ['number', 'created_at'], 'created_at');
     }
 
     /**
@@ -111,6 +110,36 @@ class Index extends Component
 
         Flux::toast(variant: 'success', text: __('NCR :number created as a draft.', ['number' => $ncr->number]));
         $this->redirectRoute('ncrs.show', $ncr, navigate: true);
+    }
+
+    /**
+     * The list as on screen (search excluded; WithTable adds it), shared by the table and the export.
+     *
+     * @return Builder<Ncr>
+     */
+    private function listQuery(): Builder
+    {
+        return $this->filtered()
+            ->with(['part:id,part_number,revision', 'supplier:id,name'])
+            ->when(in_array($this->status, Ncr::STATUSES, true), fn (Builder $q) => $q->where('status', $this->status));
+    }
+
+    public function export(): StreamedResponse
+    {
+        return $this->exportCsv($this->listQuery(), self::SEARCHABLE, 'ncrs', [
+            'Number' => fn (Ncr $n) => $n->number,
+            'Title' => fn (Ncr $n) => $n->title,
+            'Source' => fn (Ncr $n) => __(Str::headline($n->source)),
+            'Severity' => fn (Ncr $n) => __(Str::headline($n->severity)),
+            'Part' => fn (Ncr $n) => $n->part?->label(),
+            'Supplier' => fn (Ncr $n) => $n->supplier?->name,
+            'Customer' => fn (Ncr $n) => $n->customer,
+            'Quantity affected' => fn (Ncr $n) => $n->quantity_affected !== null ? Decimal::format($n->quantity_affected) : null,
+            'Disposition' => fn (Ncr $n) => $n->disposition ? __(Str::headline($n->disposition)) : null,
+            'Status' => fn (Ncr $n) => __(Str::headline($n->status)),
+            'Raised' => fn (Ncr $n) => $n->created_at?->format('Y-m-d'),
+            'Closed' => fn (Ncr $n) => $n->closed_at?->format('Y-m-d'),
+        ]);
     }
 
     public function render(): View

@@ -5,9 +5,12 @@
             <flux:subheading>{{ __('Failed inspections, rejected certificates and failed calibrations open here automatically. Add complaints and other findings by hand.') }}</flux:subheading>
         </div>
 
-        @can('create-ncrs')
+        <div class="flex flex-wrap gap-2">
+            <flux:button icon="arrow-down-tray" wire:click="export">{{ __('Export') }}</flux:button>
+            @can('create-ncrs')
             <flux:button variant="primary" icon="plus" wire:click="create">{{ __('Add NCR') }}</flux:button>
-        @endcan
+            @endcan
+        </div>
     </div>
 
     <div class="flex flex-wrap gap-2" role="tablist">

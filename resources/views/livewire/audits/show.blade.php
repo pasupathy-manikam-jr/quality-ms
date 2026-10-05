@@ -111,4 +111,6 @@
             </flux:card>
         </div>
     </div>
+
+    <x-audit-history :record="$audit" />
 </section>

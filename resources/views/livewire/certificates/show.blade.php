@@ -289,4 +289,6 @@
     @can('delete-certificates')
     <x-modal.confirm name="confirm-certificate-delete" :title="__('Delete this certificate?')" :text="__('Its :lots, results and file are deleted too. Only certificates still waiting for a decision can be deleted.', ['lots' => strtolower($lotLabel)])" confirm="delete" icon="trash" :confirm-label="__('Delete')" />
     @endcan
+
+    <x-audit-history :record="$certificate" />
 </section>

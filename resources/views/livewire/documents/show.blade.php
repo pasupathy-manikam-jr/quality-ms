@@ -215,4 +215,6 @@
     @can('approve-documents')
         <x-signature.dialog />
     @endcan
+
+    <x-audit-history :record="$document" />
 </section>

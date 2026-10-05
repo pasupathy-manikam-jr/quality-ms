@@ -188,4 +188,6 @@
     @can('edit-gauges')
     <x-modal.confirm name="confirm-gauge-status" :title="$pendingStatus === 'retired' ? __('Retire this gauge?') : __('Take this gauge out of service?')" :text="$pendingStatus === 'retired' ? __('It can no longer be used or calibrated. This cannot be undone.') : __('It cannot be used until it passes a calibration.')" confirm="changeStatus" icon="no-symbol" :confirm-label="__('Confirm')" />
     @endcan
+
+    <x-audit-history :record="$gauge" />
 </section>

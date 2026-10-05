@@ -8,13 +8,16 @@ use App\Models\User;
 use Flux\Flux;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * @property-read Collection<int, User> $owners
@@ -62,11 +65,7 @@ class Index extends Component
     #[Computed]
     public function gauges(): LengthAwarePaginator
     {
-        $query = Gauge::query()
-            ->with('owner:id,name')
-            ->when(in_array($this->state, Gauge::STATES, true), fn ($q) => $q->inState($this->state));
-
-        return $this->paginateTable($query, self::SEARCHABLE, ['code', 'description', 'next_due_on'], 'next_due_on');
+        return $this->paginateTable($this->listQuery(), self::SEARCHABLE, ['code', 'description', 'next_due_on'], 'next_due_on');
     }
 
     /**
@@ -175,6 +174,34 @@ class Index extends Component
 
         $gauge->delete();
         Flux::toast(variant: 'success', text: __('Gauge deleted.'));
+    }
+
+    /**
+     * The list as on screen (search excluded; WithTable adds it), shared by the table and the export.
+     *
+     * @return Builder<Gauge>
+     */
+    private function listQuery(): Builder
+    {
+        return Gauge::query()
+            ->with('owner:id,name')
+            ->when(in_array($this->state, Gauge::STATES, true), fn ($q) => $q->inState($this->state));
+    }
+
+    public function export(): StreamedResponse
+    {
+        return $this->exportCsv($this->listQuery(), self::SEARCHABLE, 'gauges', [
+            'Code' => fn (Gauge $g) => $g->code,
+            'Description' => fn (Gauge $g) => $g->description,
+            'Type' => fn (Gauge $g) => $g->type,
+            'Range' => fn (Gauge $g) => $g->measuring_range,
+            'Resolution' => fn (Gauge $g) => $g->resolution,
+            'Location' => fn (Gauge $g) => $g->location,
+            'Owner' => fn (Gauge $g) => $g->owner?->name,
+            'Calibration interval (days)' => fn (Gauge $g) => $g->interval_days,
+            'Next due' => fn (Gauge $g) => $g->next_due_on?->format('Y-m-d'),
+            'Status' => fn (Gauge $g) => __(Str::headline($g->state())),
+        ]);
     }
 
     public function render(): View

@@ -1,9 +1,12 @@
 @php($lotLabel = \App\Models\Lot::label())
 
 <section class="w-full space-y-6">
-    <div>
-        <flux:heading size="xl" level="1">{{ $lotLabel }}</flux:heading>
-        <flux:subheading>{{ __('Find any :lot and the certificate it arrived with.', ['lot' => strtolower($lotLabel)]) }}</flux:subheading>
+    <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <flux:heading size="xl" level="1">{{ $lotLabel }}</flux:heading>
+            <flux:subheading>{{ __('Find any :lot and the certificate it arrived with.', ['lot' => strtolower($lotLabel)]) }}</flux:subheading>
+        </div>
+        <flux:button icon="arrow-down-tray" wire:click="export">{{ __('Export') }}</flux:button>
     </div>
 
     <div class="flex flex-wrap items-center gap-3">

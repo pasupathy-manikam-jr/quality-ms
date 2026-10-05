@@ -11,11 +11,13 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * @property-read Collection<int, User> $users
@@ -53,12 +55,7 @@ class Index extends Component
     #[Computed]
     public function audits(): LengthAwarePaginator
     {
-        $query = QualityAudit::query()
-            ->with('leadAuditor:id,name')
-            ->withCount('findings')
-            ->when(in_array($this->status, QualityAudit::STATUSES, true), fn (Builder $q) => $q->where('status', $this->status));
-
-        return $this->paginateTable($query, self::SEARCHABLE, ['number', 'planned_on'], 'planned_on');
+        return $this->paginateTable($this->listQuery(), self::SEARCHABLE, ['number', 'planned_on'], 'planned_on');
     }
 
     /**
@@ -121,6 +118,32 @@ class Index extends Component
 
         Flux::toast(variant: 'success', text: __('Audit :number planned.', ['number' => $audit->number]));
         $this->redirectRoute('audits.show', $audit, navigate: true);
+    }
+
+    /**
+     * The list as on screen (search excluded; WithTable adds it), shared by the table and the export.
+     *
+     * @return Builder<QualityAudit>
+     */
+    private function listQuery(): Builder
+    {
+        return QualityAudit::query()
+            ->with('leadAuditor:id,name')
+            ->withCount('findings')
+            ->when(in_array($this->status, QualityAudit::STATUSES, true), fn (Builder $q) => $q->where('status', $this->status));
+    }
+
+    public function export(): StreamedResponse
+    {
+        return $this->exportCsv($this->listQuery(), self::SEARCHABLE, 'audits', [
+            'Number' => fn (QualityAudit $a) => $a->number,
+            'Title' => fn (QualityAudit $a) => $a->title,
+            'Lead auditor' => fn (QualityAudit $a) => $a->leadAuditor?->name,
+            'Planned' => fn (QualityAudit $a) => $a->planned_on->format('Y-m-d'),
+            'Findings' => fn (QualityAudit $a) => $a->findings_count,
+            'Status' => fn (QualityAudit $a) => __(Str::headline($a->status)),
+            'Completed' => fn (QualityAudit $a) => $a->completed_at?->format('Y-m-d'),
+        ]);
     }
 
     public function render(): View

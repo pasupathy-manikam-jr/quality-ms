@@ -7,17 +7,21 @@ use App\Models\Supplier;
 use Flux\Flux;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 #[Title('Suppliers')]
 class Index extends Component
 {
     use WithTable;
+
+    private const SEARCHABLE = ['code', 'name', 'contact_name', 'email'];
 
     #[Url(except: '')]
     public string $approval = '';
@@ -53,16 +57,7 @@ class Index extends Component
     #[Computed]
     public function suppliers(): LengthAwarePaginator
     {
-        $query = Supplier::query()
-            ->withCount([
-                'certificates',
-                'certificates as verified_count' => fn ($q) => $q->where('status', 'verified'),
-                'certificates as rejected_count' => fn ($q) => $q->where('status', 'rejected'),
-                'ncrs as recent_ncrs_count' => fn ($q) => $q->where('created_at', '>=', now()->subYear())->where('status', '!=', 'cancelled'),
-            ])
-            ->when($this->approval !== '', fn ($q) => $q->where('is_approved', $this->approval === 'approved'));
-
-        return $this->paginateTable($query, ['code', 'name', 'contact_name', 'email'], ['code', 'name', 'created_at'], 'code');
+        return $this->paginateTable($this->listQuery(), self::SEARCHABLE, ['code', 'name', 'created_at'], 'code');
     }
 
     public function create(): void
@@ -140,6 +135,37 @@ class Index extends Component
 
         $supplier->delete();
         Flux::toast(variant: 'success', text: __('Supplier deleted.'));
+    }
+
+    /**
+     * The list as on screen (search excluded; WithTable adds it), shared by the table and the export.
+     *
+     * @return Builder<Supplier>
+     */
+    private function listQuery(): Builder
+    {
+        return Supplier::query()
+            ->withCount([
+                'certificates',
+                'certificates as verified_count' => fn ($q) => $q->where('status', 'verified'),
+                'certificates as rejected_count' => fn ($q) => $q->where('status', 'rejected'),
+                'ncrs as recent_ncrs_count' => fn ($q) => $q->where('created_at', '>=', now()->subYear())->where('status', '!=', 'cancelled'),
+            ])
+            ->when($this->approval !== '', fn ($q) => $q->where('is_approved', $this->approval === 'approved'));
+    }
+
+    public function export(): StreamedResponse
+    {
+        return $this->exportCsv($this->listQuery(), self::SEARCHABLE, 'suppliers', [
+            'Code' => fn (Supplier $s) => $s->code,
+            'Name' => fn (Supplier $s) => $s->name,
+            'Contact person' => fn (Supplier $s) => $s->contact_name,
+            'Email' => fn (Supplier $s) => $s->email,
+            'Phone' => fn (Supplier $s) => $s->phone,
+            'Approved' => fn (Supplier $s) => $s->is_approved ? __('Yes') : __('No'),
+            'Approved on' => fn (Supplier $s) => $s->approved_on?->format('Y-m-d'),
+            'Certificates' => fn (Supplier $s) => $s->certificates_count,
+        ]);
     }
 
     public function render(): View

@@ -107,6 +107,11 @@
                         <flux:sidebar.item icon="users" :href="route('users.index')" :current="request()->routeIs('users.*')" wire:navigate>
                             {{ __('Users') }}
                         </flux:sidebar.item>
+                        @can('manage-roles')
+                            <flux:sidebar.item icon="shield-check" :href="route('roles.index')" :current="request()->routeIs('roles.*')" wire:navigate>
+                                {{ __('Roles') }}
+                            </flux:sidebar.item>
+                        @endcan
                     </flux:sidebar.group>
                 </flux:sidebar.nav>
             @endcan

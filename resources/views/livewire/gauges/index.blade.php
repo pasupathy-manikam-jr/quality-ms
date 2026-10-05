@@ -5,9 +5,12 @@
             <flux:subheading>{{ __('Measuring equipment and when each one is next due for calibration.') }}</flux:subheading>
         </div>
 
-        @can('create-gauges')
+        <div class="flex flex-wrap gap-2">
+            <flux:button icon="arrow-down-tray" wire:click="export">{{ __('Export') }}</flux:button>
+            @can('create-gauges')
             <flux:button variant="primary" icon="plus" wire:click="create">{{ __('Add gauge') }}</flux:button>
-        @endcan
+            @endcan
+        </div>
     </div>
 
     <div class="flex flex-wrap gap-2" role="tablist">

@@ -164,4 +164,6 @@
     @can('approve-inspection-plans')
         <x-signature.dialog />
     @endcan
+
+    <x-audit-history :record="$plan" />
 </section>

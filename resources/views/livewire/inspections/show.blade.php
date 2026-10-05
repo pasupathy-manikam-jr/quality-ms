@@ -138,4 +138,6 @@
     @if ($canEdit)
     <x-signature.dialog />
     @endif
+
+    <x-audit-history :record="$inspection" />
 </section>

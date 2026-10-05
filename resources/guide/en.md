@@ -27,7 +27,7 @@ You only see the pages your role allows.
 
 ### Lists
 
-Every list works the same way. Type in the search box to filter, use the drop-downs and the status tabs to narrow it down, click a column heading to sort, and choose how many rows to show. The address bar keeps your search and filters, so you can bookmark or share a filtered list.
+Every list works the same way. Type in the search box to filter, use the drop-downs and the status tabs to narrow it down, click a column heading to sort, and choose how many rows to show. The address bar keeps your search and filters, so you can bookmark or share a filtered list. **Export** downloads the list, as filtered, as a CSV file that opens in Excel.
 
 ### Required fields
 
@@ -42,6 +42,9 @@ A red **\*** after a field name means the field must be filled in. When somethin
 | Inspector | Records the work: certificates and their results, inspections, NCRs and CAPA actions. |
 | Auditor | Reads everything and runs internal audits. |
 | Viewer | Reads everything. |
+
+Administrators can add **custom roles** under **Administration → Roles** and tick exactly what each may do. The built-in roles above are fixed.
+
 
 ## Dashboard
 
@@ -205,7 +208,7 @@ Approvals, verifications, rejections, closures and inspection sign-off ask for y
 
 ## Audit trail
 
-Every change to a quality record is logged with who made it, when, and the values before and after. Nobody can edit or delete the log. Records that matter for an audit (calibrations, findings, signatures) cannot be deleted either; they are corrected by adding a new record.
+Every change to a quality record is logged with who made it, when, and the values before and after. Nobody can edit or delete the log. Each record page shows its **History** at the bottom. Records that matter for an audit (calibrations, findings, signatures) cannot be deleted either; they are corrected by adding a new record.
 
 ## Questions
 

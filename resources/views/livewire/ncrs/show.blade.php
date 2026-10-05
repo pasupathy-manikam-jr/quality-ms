@@ -173,4 +173,6 @@
     @can('approve-ncrs')
         <x-signature.dialog />
     @endcan
+
+    <x-audit-history :record="$ncr" />
 </section>

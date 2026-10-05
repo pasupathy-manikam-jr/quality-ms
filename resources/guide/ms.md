@@ -27,7 +27,7 @@ Anda hanya melihat halaman yang dibenarkan oleh peranan anda.
 
 ### Senarai
 
-Setiap senarai berfungsi dengan cara yang sama. Taip dalam kotak carian untuk menapis, gunakan senarai juntai bawah dan tab status untuk mengecilkan senarai, klik tajuk lajur untuk mengisih, dan pilih bilangan baris yang hendak dipaparkan. Bar alamat menyimpan carian dan penapis anda, jadi anda boleh menanda buku atau berkongsi senarai yang telah ditapis.
+Setiap senarai berfungsi dengan cara yang sama. Taip dalam kotak carian untuk menapis, gunakan senarai juntai bawah dan tab status untuk mengecilkan senarai, klik tajuk lajur untuk mengisih, dan pilih bilangan baris yang hendak dipaparkan. Bar alamat menyimpan carian dan penapis anda, jadi anda boleh menanda buku atau berkongsi senarai yang telah ditapis. **Eksport** memuat turun senarai, mengikut penapis semasa, sebagai fail CSV yang boleh dibuka dalam Excel.
 
 ### Medan wajib
 
@@ -42,6 +42,8 @@ Tanda **\*** merah selepas nama medan bermaksud medan itu mesti diisi. Jika ada 
 | Pemeriksa | Merekodkan kerja: sijil dan keputusannya, pemeriksaan, NCR dan tindakan CAPA. |
 | Juruaudit | Membaca semua rekod dan menjalankan audit dalaman. |
 | Pembaca | Membaca semua rekod. |
+
+Pentadbir boleh menambah **peranan tersuai** di bawah **Pentadbiran → Peranan** dan menanda dengan tepat apa yang boleh dilakukan oleh setiap peranan. Peranan terbina dalam di atas adalah tetap.
 
 ## Papan pemuka
 
@@ -205,7 +207,7 @@ Kelulusan, pengesahan, penolakan, penutupan dan pengesahan akhir pemeriksaan mem
 
 ## Jejak audit
 
-Setiap perubahan pada rekod kualiti dilog bersama siapa yang membuatnya, bila, dan nilai sebelum dan selepas. Tiada sesiapa boleh menyunting atau memadam log ini. Rekod yang penting untuk audit (penentukuran, penemuan, tandatangan) juga tidak boleh dipadam; ia dibetulkan dengan menambah rekod baharu.
+Setiap perubahan pada rekod kualiti dilog bersama siapa yang membuatnya, bila, dan nilai sebelum dan selepas. Tiada sesiapa boleh menyunting atau memadam log ini. Setiap halaman rekod memaparkan **Sejarah**nya di bahagian bawah. Rekod yang penting untuk audit (penentukuran, penemuan, tandatangan) juga tidak boleh dipadam; ia dibetulkan dengan menambah rekod baharu.
 
 ## Soalan
 

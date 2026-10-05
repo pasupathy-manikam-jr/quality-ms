@@ -19,7 +19,7 @@
             <x-select wire:model.live="role">
                 <x-select.option value="">{{ __('All roles') }}</x-select.option>
                 @foreach ($this->roles as $value => $label)
-                    <x-select.option :value="$value">{{ __($label) }}</x-select.option>
+                    <x-select.option :value="$value">{{ $label }}</x-select.option>
                 @endforeach
             </x-select>
         </div>
@@ -56,7 +56,7 @@
                     <flux:table.cell>{{ $user->email }}</flux:table.cell>
                     <flux:table.cell>
                         @foreach ($user->roles as $userRole)
-                            <flux:badge size="sm" color="zinc">{{ __(Str::headline($userRole->name)) }}</flux:badge>
+                            <flux:badge size="sm" color="zinc">{{ \Database\Seeders\RolesSeeder::label($userRole->name) }}</flux:badge>
                         @endforeach
                     </flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $user->created_at?->format('Y-m-d') }}</flux:table.cell>
@@ -91,7 +91,7 @@
 
         <x-select wire:model="userRole" :label="__('Role')" badge="*" :placeholder="__('Choose a role')">
             @foreach ($this->roles as $value => $label)
-                <x-select.option :value="$value">{{ __($label) }}</x-select.option>
+                <x-select.option :value="$value">{{ $label }}</x-select.option>
             @endforeach
         </x-select>
 

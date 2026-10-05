@@ -12,11 +12,13 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 #[Title('Certificates')]
 class Index extends Component
@@ -57,12 +59,7 @@ class Index extends Component
     #[Computed]
     public function certificates(): LengthAwarePaginator
     {
-        $query = $this->filtered()
-            ->with('supplier:id,name')
-            ->withCount('lots')
-            ->when(in_array($this->status, Certificate::STATUSES, true), fn (Builder $q) => $q->where('status', $this->status));
-
-        return $this->paginateTable($query, self::SEARCHABLE, ['number', 'issued_on', 'created_at'], 'issued_on');
+        return $this->paginateTable($this->listQuery(), self::SEARCHABLE, ['number', 'issued_on', 'created_at'], 'issued_on');
     }
 
     /**
@@ -100,6 +97,32 @@ class Index extends Component
 
         Flux::toast(variant: 'success', text: __('Certificate added. Now add its :lots.', ['lots' => strtolower(Lot::label())]));
         $this->redirectRoute('certificates.show', $certificate, navigate: true);
+    }
+
+    /**
+     * The list as on screen (search excluded; WithTable adds it), shared by the table and the export.
+     *
+     * @return Builder<Certificate>
+     */
+    private function listQuery(): Builder
+    {
+        return $this->filtered()
+            ->with('supplier:id,name')
+            ->withCount('lots')
+            ->when(in_array($this->status, Certificate::STATUSES, true), fn (Builder $q) => $q->where('status', $this->status));
+    }
+
+    public function export(): StreamedResponse
+    {
+        return $this->exportCsv($this->listQuery(), self::SEARCHABLE, 'certificates', [
+            'Number' => fn (Certificate $c) => $c->number,
+            'Supplier' => fn (Certificate $c) => $c->supplier->name,
+            'Type' => fn (Certificate $c) => $c->typeLabel(),
+            'Issued on' => fn (Certificate $c) => $c->issued_on->format('Y-m-d'),
+            'Purchase order' => fn (Certificate $c) => $c->po_number,
+            'Lots' => fn (Certificate $c) => $c->lots_count,
+            'Status' => fn (Certificate $c) => __(Str::headline($c->status)),
+        ]);
     }
 
     public function render(): View

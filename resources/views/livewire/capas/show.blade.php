@@ -223,4 +223,6 @@
     @can('verify-capas')
         <x-signature.dialog />
     @endcan
+
+    <x-audit-history :record="$capa" />
 </section>

@@ -2,12 +2,15 @@
 
 namespace App\Livewire\Concerns;
 
+use App\Support\Csv;
+use Closure;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Search, sort and paginate a list page the same way everywhere. State lives in
@@ -71,6 +74,39 @@ trait WithTable
         $perPage = in_array($this->perPage, $this->perPageOptions(), true) ? $this->perPage : $this->perPageOptions()[0];
 
         return $query->orderBy($field, $direction)->orderBy($query->qualifyColumn('id'), $direction)->paginate($perPage);
+    }
+
+    /**
+     * Download the list as CSV: the same search and filters as on screen, every page.
+     *
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel>  $query
+     * @param  list<string>  $searchable
+     * @param  array<string, Closure(TModel): mixed>  $columns  header (translation key) => value
+     */
+    protected function exportCsv(Builder $query, array $searchable, string $name, array $columns): StreamedResponse
+    {
+        $rows = $this->applySearch($query, $searchable)
+            ->reorder()
+            ->orderBy($query->qualifyColumn('id'))
+            ->lazy(500)
+            ->map(fn (Model $model) => array_map(fn (Closure $column) => self::csvCell($column($model)), array_values($columns)));
+
+        return Csv::download(
+            $name.'-'.now()->format('Y-m-d').'.csv',
+            array_map(fn (string $header) => (string) __($header), array_keys($columns)),
+            $rows,
+        );
+    }
+
+    private static function csvCell(mixed $value): string|int|float|bool|null
+    {
+        return match (true) {
+            $value === null, is_scalar($value) => $value,
+            is_array($value) => implode(', ', array_filter($value, 'is_scalar')),
+            default => '',
+        };
     }
 
     /**

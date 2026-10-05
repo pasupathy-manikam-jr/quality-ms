@@ -10,11 +10,13 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * @property-read Collection<int, User> $owners
@@ -23,6 +25,8 @@ use Livewire\Component;
 class Index extends Component
 {
     use WithTable;
+
+    private const SEARCHABLE = ['number', 'title'];
 
     #[Url(except: '')]
     public string $type = '';
@@ -56,12 +60,7 @@ class Index extends Component
     #[Computed]
     public function documents(): LengthAwarePaginator
     {
-        $query = Document::query()
-            ->with(['owner:id,name', 'effectiveRevision:id,document_id,revision', 'revisions' => fn ($q) => $q->whereIn('status', ['draft', 'in-review'])->select('id', 'document_id', 'revision', 'status')])
-            ->when(in_array($this->type, Document::TYPES, true), fn (Builder $q) => $q->where('type', $this->type))
-            ->when($this->due, fn (Builder $q) => $q->dueForReview());
-
-        return $this->paginateTable($query, ['number', 'title'], ['number', 'title', 'next_review_on'], 'number');
+        return $this->paginateTable($this->listQuery(), self::SEARCHABLE, ['number', 'title', 'next_review_on'], 'number');
     }
 
     /**
@@ -106,6 +105,31 @@ class Index extends Component
 
         Flux::toast(variant: 'success', text: __('Document created with draft revision A. Upload its file next.'));
         $this->redirectRoute('documents.show', $document, navigate: true);
+    }
+
+    /**
+     * The list as on screen (search excluded; WithTable adds it), shared by the table and the export.
+     *
+     * @return Builder<Document>
+     */
+    private function listQuery(): Builder
+    {
+        return Document::query()
+            ->with(['owner:id,name', 'effectiveRevision:id,document_id,revision', 'revisions' => fn ($q) => $q->whereIn('status', ['draft', 'in-review'])->select('id', 'document_id', 'revision', 'status')])
+            ->when(in_array($this->type, Document::TYPES, true), fn (Builder $q) => $q->where('type', $this->type))
+            ->when($this->due, fn (Builder $q) => $q->dueForReview());
+    }
+
+    public function export(): StreamedResponse
+    {
+        return $this->exportCsv($this->listQuery(), self::SEARCHABLE, 'documents', [
+            'Number' => fn (Document $d) => $d->number,
+            'Title' => fn (Document $d) => $d->title,
+            'Type' => fn (Document $d) => __(Str::headline($d->type)),
+            'Effective' => fn (Document $d) => $d->effectiveRevision?->revision,
+            'Owner' => fn (Document $d) => $d->owner?->name,
+            'Next review' => fn (Document $d) => $d->next_review_on?->format('Y-m-d'),
+        ]);
     }
 
     public function render(): View

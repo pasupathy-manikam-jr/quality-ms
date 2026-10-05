@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -17,6 +18,7 @@ class RolesSeeder extends Seeder
      */
     public const PERMISSIONS = [
         'users' => ['manage', 'create', 'edit', 'delete'],
+        'roles' => ['manage', 'create', 'edit', 'delete'],
         'suppliers' => ['manage', 'create', 'edit', 'delete'],
         'materials' => ['manage', 'create', 'edit', 'delete'],
         'certificates' => ['manage', 'create', 'edit', 'delete', 'verify'],
@@ -57,6 +59,14 @@ class RolesSeeder extends Seeder
         'auditor' => ['manage-suppliers', 'manage-materials', 'manage-certificates', 'manage-gauges', 'manage-parts', 'manage-inspection-plans', 'manage-inspections', 'manage-ncrs', 'manage-capas', 'manage-documents', 'manage-audits', 'create-audits', 'edit-audits'],
         'viewer' => ['manage-suppliers', 'manage-materials', 'manage-certificates', 'manage-gauges', 'manage-parts', 'manage-inspection-plans', 'manage-inspections', 'manage-ncrs', 'manage-capas', 'manage-documents', 'manage-audits'],
     ];
+
+    /**
+     * How a role is shown: built-in roles by their translated title, custom roles as named.
+     */
+    public static function label(string $role): string
+    {
+        return array_key_exists($role, self::ROLES) ? __(Str::headline($role)) : $role;
+    }
 
     public function run(): void
     {

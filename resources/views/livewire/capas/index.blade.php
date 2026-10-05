@@ -5,9 +5,12 @@
             <flux:subheading>{{ __('Root-cause fixes, worked through the eight disciplines (8D).') }}</flux:subheading>
         </div>
 
-        @can('create-capas')
+        <div class="flex flex-wrap gap-2">
+            <flux:button icon="arrow-down-tray" wire:click="export">{{ __('Export') }}</flux:button>
+            @can('create-capas')
             <flux:button variant="primary" icon="plus" wire:click="create">{{ __('Add CAPA') }}</flux:button>
-        @endcan
+            @endcan
+        </div>
     </div>
 
     <div class="flex flex-wrap gap-2" role="tablist">

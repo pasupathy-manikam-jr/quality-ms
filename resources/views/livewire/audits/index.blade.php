@@ -5,9 +5,12 @@
             <flux:subheading>{{ __('Planned audits of the quality system (ISO 9001 §9.2). Nonconformities found raise NCRs.') }}</flux:subheading>
         </div>
 
-        @can('create-audits')
+        <div class="flex flex-wrap gap-2">
+            <flux:button icon="arrow-down-tray" wire:click="export">{{ __('Export') }}</flux:button>
+            @can('create-audits')
             <flux:button variant="primary" icon="plus" wire:click="create">{{ __('Plan audit') }}</flux:button>
-        @endcan
+            @endcan
+        </div>
     </div>
 
     <div class="flex flex-wrap gap-2" role="tablist">

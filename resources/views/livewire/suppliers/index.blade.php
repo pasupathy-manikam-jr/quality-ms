@@ -5,9 +5,12 @@
             <flux:subheading>{{ __('Approved suppliers, and how their deliveries have gone: certificates accepted and NCRs in the last 12 months.') }}</flux:subheading>
         </div>
 
-        @can('create-suppliers')
+        <div class="flex flex-wrap gap-2">
+            <flux:button icon="arrow-down-tray" wire:click="export">{{ __('Export') }}</flux:button>
+            @can('create-suppliers')
             <flux:button variant="primary" icon="plus" wire:click="create">{{ __('Add supplier') }}</flux:button>
-        @endcan
+            @endcan
+        </div>
     </div>
 
     <div class="flex flex-wrap items-center gap-3">

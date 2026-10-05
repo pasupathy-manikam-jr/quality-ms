@@ -5,9 +5,12 @@
             <flux:subheading>{{ __('Controlled documents: policies, procedures, work instructions and forms (ISO 9001 §7.5).') }}</flux:subheading>
         </div>
 
-        @can('create-documents')
+        <div class="flex flex-wrap gap-2">
+            <flux:button icon="arrow-down-tray" wire:click="export">{{ __('Export') }}</flux:button>
+            @can('create-documents')
             <flux:button variant="primary" icon="plus" wire:click="create">{{ __('Add document') }}</flux:button>
-        @endcan
+            @endcan
+        </div>
     </div>
 
     <div class="flex flex-wrap items-center gap-3">

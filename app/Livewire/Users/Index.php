@@ -9,7 +9,6 @@ use Database\Seeders\RolesSeeder;
 use Flux\Flux;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Computed;
@@ -17,7 +16,11 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Spatie\Permission\Models\Role;
 
+/**
+ * @property-read array<string, string> $roles
+ */
 #[Title('Users')]
 class Index extends Component
 {
@@ -55,7 +58,7 @@ class Index extends Component
     {
         $query = User::query()
             ->with('roles:id,name')
-            ->when(array_key_exists($this->role, RolesSeeder::ROLES), fn ($q) => $q->role($this->role));
+            ->when(array_key_exists($this->role, $this->roles), fn ($q) => $q->role($this->role));
 
         return $this->paginateTable($query, ['name', 'email'], ['name', 'email', 'created_at']);
     }
@@ -66,7 +69,9 @@ class Index extends Component
     #[Computed]
     public function roles(): array
     {
-        return collect(RolesSeeder::ROLES)->keys()->mapWithKeys(fn (string $name) => [$name => Str::headline($name)])->all();
+        return Role::query()->orderBy('id')->pluck('name')
+            ->mapWithKeys(fn (string $name) => [$name => RolesSeeder::label($name)])
+            ->all();
     }
 
     public function create(): void
@@ -101,7 +106,7 @@ class Index extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
-            'userRole' => ['required', Rule::in(array_keys(RolesSeeder::ROLES))],
+            'userRole' => ['required', Rule::in(array_keys($this->roles))],
             'password' => $user->exists ? ['nullable', 'string', Password::default(), 'confirmed'] : $this->passwordRules(),
         ], attributes: ['userRole' => __('role')]);
 

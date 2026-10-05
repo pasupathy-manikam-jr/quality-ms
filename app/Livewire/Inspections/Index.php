@@ -6,16 +6,19 @@ use App\Livewire\Concerns\WithTable;
 use App\Models\Inspection;
 use App\Models\InspectionPlan;
 use App\Models\Lot;
+use App\Support\Decimal;
 use Flux\Flux;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * @property-read Collection<int, InspectionPlan> $plans
@@ -57,11 +60,7 @@ class Index extends Component
     #[Computed]
     public function inspections(): LengthAwarePaginator
     {
-        $query = Inspection::query()
-            ->with(['plan:id,title,stage,part_id,material_id', 'plan.part:id,part_number,revision', 'plan.material:id,code', 'lot:id,lot_number', 'creator:id,name'])
-            ->when(in_array($this->status, Inspection::STATUSES, true), fn (Builder $q) => $q->where('status', $this->status));
-
-        return $this->paginateTable($query, self::SEARCHABLE, ['number', 'inspected_on'], 'inspected_on');
+        return $this->paginateTable($this->listQuery(), self::SEARCHABLE, ['number', 'inspected_on'], 'inspected_on');
     }
 
     /**
@@ -148,6 +147,34 @@ class Index extends Component
 
         Flux::toast(variant: 'success', text: __('Inspection :number started.', ['number' => $inspection->number]));
         $this->redirectRoute('inspections.show', $inspection, navigate: true);
+    }
+
+    /**
+     * The list as on screen (search excluded; WithTable adds it), shared by the table and the export.
+     *
+     * @return Builder<Inspection>
+     */
+    private function listQuery(): Builder
+    {
+        return Inspection::query()
+            ->with(['plan:id,title,stage,part_id,material_id', 'plan.part:id,part_number,revision', 'plan.material:id,code', 'lot:id,lot_number', 'creator:id,name'])
+            ->when(in_array($this->status, Inspection::STATUSES, true), fn (Builder $q) => $q->where('status', $this->status));
+    }
+
+    public function export(): StreamedResponse
+    {
+        return $this->exportCsv($this->listQuery(), self::SEARCHABLE, 'inspections', [
+            'Number' => fn (Inspection $i) => $i->number,
+            'Plan' => fn (Inspection $i) => $i->plan->title,
+            'Part or material' => fn (Inspection $i) => $i->plan->subjectLabel(),
+            'Stage' => fn (Inspection $i) => __(Str::headline($i->plan->stage)),
+            'Lot' => fn (Inspection $i) => $i->lot?->lot_number,
+            'Reference' => fn (Inspection $i) => $i->reference,
+            'Quantity' => fn (Inspection $i) => $i->quantity !== null ? Decimal::format($i->quantity) : null,
+            'Date' => fn (Inspection $i) => $i->inspected_on->format('Y-m-d'),
+            'Inspector' => fn (Inspection $i) => $i->creator?->name,
+            'Status' => fn (Inspection $i) => __(Str::headline($i->status)),
+        ]);
     }
 
     public function render(): View

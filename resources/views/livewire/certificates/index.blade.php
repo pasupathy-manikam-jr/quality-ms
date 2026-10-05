@@ -5,9 +5,12 @@
             <flux:subheading>{{ __('Supplier material certificates, checked against specification limits before the material is used.') }}</flux:subheading>
         </div>
 
-        @can('create-certificates')
+        <div class="flex flex-wrap gap-2">
+            <flux:button icon="arrow-down-tray" wire:click="export">{{ __('Export') }}</flux:button>
+            @can('create-certificates')
             <flux:button variant="primary" icon="plus" wire:click="create">{{ __('Add certificate') }}</flux:button>
-        @endcan
+            @endcan
+        </div>
     </div>
 
     <div class="flex flex-wrap gap-2" role="tablist">

@@ -98,4 +98,6 @@
 
     <x-modal.confirm name="confirm-limit-delete" :title="__('Remove this limit?')" :text="__('Certificates still waiting for verification will be checked without it.')" confirm="delete" icon="trash" :confirm-label="__('Remove')" />
     @endcan
+
+    <x-audit-history :record="$material" />
 </section>
