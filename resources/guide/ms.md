@@ -49,6 +49,8 @@ Pentadbir boleh menambah **peranan tersuai** di bawah **Pentadbiran → Peranan*
 
 Papan pemuka menunjukkan perkara yang perlu diberi perhatian hari ini: NCR terbuka, CAPA tertunggak, tolok yang tiba tempoh atau tertunggak penentukuran, sijil yang menunggu pengesahan, pemeriksaan sedang berjalan, dokumen yang perlu dikaji semula, dan dokumen yang anda diminta baca. Klik pada nombor untuk membuka senarai tersebut.
 
+**Menunggu saya** menyenaraikan perkara yang memerlukan anda secara peribadi, yang tertunggak dahulu: semakan, pelupusan NCR dan pelan untuk diluluskan (bukan kerja anda sendiri), CAPA dan tindakan milik anda, serta tolok anda yang tiba tempoh penentukuran. Anda juga menerima e-mel apabila semakan atau pelupusan memerlukan kelulusan anda, atau apabila seseorang memberi anda tindakan CAPA.
+
 Di bawah nombor-nombor itu:
 
 - **Ketakakuran mengikut sumber** (90 hari lepas), yang terbesar dahulu. Membetulkan satu atau dua sumber teratas biasanya menghapuskan kebanyakan masalah.

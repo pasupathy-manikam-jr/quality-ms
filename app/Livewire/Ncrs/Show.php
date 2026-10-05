@@ -8,6 +8,7 @@ use App\Models\Capa;
 use App\Models\Ncr;
 use App\Models\Part;
 use App\Models\Supplier;
+use App\Support\Notify;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -114,6 +115,7 @@ class Show extends Component
         ], ['disposition_notes.required_if' => __('Explain why the material can be used as it is.')]);
 
         $this->ncr->update([...$validated, 'disposition_notes' => $validated['disposition_notes'] ?: null]);
+        Notify::ncrDispositionProposed($this->ncr, auth()->user()?->id);
 
         unset($this->ncr);
         Flux::toast(variant: 'success', text: __('Disposition saved. It now needs approval.'));

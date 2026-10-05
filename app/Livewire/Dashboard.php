@@ -3,16 +3,20 @@
 namespace App\Livewire;
 
 use App\Models\Capa;
+use App\Models\CapaAction;
 use App\Models\Certificate;
 use App\Models\Document;
+use App\Models\DocumentRevision;
 use App\Models\Gauge;
 use App\Models\Inspection;
+use App\Models\InspectionPlan;
 use App\Models\IsoClause;
 use App\Models\Ncr;
 use App\Models\QualityAudit;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -48,6 +52,66 @@ class Dashboard extends Component
         return array_values(array_map(fn (array $tile) => [
             'label' => $tile[1], 'value' => ($tile[2])(), 'route' => $tile[3], 'query' => $tile[4], 'icon' => $tile[5],
         ], $visible));
+    }
+
+    /**
+     * Things waiting for this person, most urgent first: approvals their role allows (never
+     * their own work), and CAPAs, actions and gauges they own.
+     *
+     * @return list<array{label: string, detail: string, url: string, due: string|null, overdue: bool}>
+     */
+    #[Computed]
+    public function waiting(): array
+    {
+        /** @var User $user */
+        $user = auth()->user();
+        $today = now()->toDateString();
+        $items = [];
+
+        if ($user->can('approve-documents')) {
+            DocumentRevision::query()->with('document:id,number,title')->where('status', 'in-review')
+                ->where(fn ($q) => $q->whereNull('created_by')->orWhere('created_by', '!=', $user->id))
+                ->get()->each(function (DocumentRevision $r) use (&$items) {
+                    $items[] = ['label' => __('Approve :number rev :r', ['number' => $r->document->number, 'r' => $r->revision]), 'detail' => $r->document->title, 'url' => route('documents.show', $r->document_id), 'due' => null, 'overdue' => false];
+                });
+        }
+
+        if ($user->can('approve-ncrs')) {
+            Ncr::query()->where('status', 'open')->whereNotNull('disposition')->get()->each(function (Ncr $n) use (&$items) {
+                $items[] = ['label' => __('Approve the disposition of :number', ['number' => $n->number]), 'detail' => $n->title, 'url' => route('ncrs.show', $n), 'due' => null, 'overdue' => false];
+            });
+        }
+
+        if ($user->can('approve-inspection-plans')) {
+            InspectionPlan::query()->where('status', 'draft')->has('items')
+                ->where(fn ($q) => $q->whereNull('created_by')->orWhere('created_by', '!=', $user->id))
+                ->get()->each(function (InspectionPlan $p) use (&$items) {
+                    $items[] = ['label' => __('Approve plan :title', ['title' => $p->title]), 'detail' => __('Revision :n', ['n' => $p->revision]), 'url' => route('inspection-plans.show', $p), 'due' => null, 'overdue' => false];
+                });
+        }
+
+        if ($user->can('manage-capas')) {
+            CapaAction::query()->with('capa:id,number,status')->where('owner_id', $user->id)->whereNull('done_at')
+                ->whereHas('capa', fn ($q) => $q->where('status', '!=', 'closed'))
+                ->get()->each(function (CapaAction $a) use (&$items, $today) {
+                    $items[] = ['label' => $a->description, 'detail' => __('Action on :number', ['number' => $a->capa->number]), 'url' => route('capas.show', $a->capa_id), 'due' => $a->due_on?->toDateString(), 'overdue' => $a->due_on !== null && $a->due_on->toDateString() < $today];
+                });
+
+            Capa::query()->where('owner_id', $user->id)->where('status', '!=', 'closed')->get()->each(function (Capa $c) use (&$items) {
+                $items[] = ['label' => __(':number: :status', ['number' => $c->number, 'status' => __(Str::headline($c->status))]), 'detail' => $c->title, 'url' => route('capas.show', $c), 'due' => $c->due_on?->toDateString(), 'overdue' => $c->isOverdue()];
+            });
+        }
+
+        if ($user->can('manage-gauges')) {
+            Gauge::query()->where('owner_id', $user->id)->where(fn ($q) => $q->inState('due')->orWhere(fn ($q) => $q->inState('overdue')))
+                ->get()->each(function (Gauge $g) use (&$items) {
+                    $items[] = ['label' => __('Calibrate :code', ['code' => $g->code]), 'detail' => $g->description, 'url' => route('gauges.show', $g), 'due' => $g->next_due_on?->toDateString(), 'overdue' => $g->state() === 'overdue'];
+                });
+        }
+
+        usort($items, fn (array $a, array $b) => [! $a['overdue'], $a['due'] ?? '9999'] <=> [! $b['overdue'], $b['due'] ?? '9999']);
+
+        return $items;
     }
 
     /**

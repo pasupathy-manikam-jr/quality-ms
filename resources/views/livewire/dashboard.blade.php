@@ -17,6 +17,25 @@
         @endforeach
     </div>
 
+    <div class="space-y-3">
+        <flux:heading>{{ __('Waiting for me') }}</flux:heading>
+        @forelse ($this->waiting as $item)
+            <a href="{{ $item['url'] }}" wire:navigate wire:key="waiting-{{ $loop->index }}"
+                class="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-zinc-200 px-4 py-3 transition hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-700/40">
+                <span class="font-medium text-zinc-800 dark:text-white">{{ $item['label'] }}</span>
+                <span class="min-w-0 flex-1 truncate text-sm text-zinc-500 dark:text-zinc-400">{{ $item['detail'] }}</span>
+                @if ($item['due'])
+                    <span @class(['whitespace-nowrap text-sm', 'font-medium text-red-600 dark:text-red-400' => $item['overdue'], 'text-zinc-500 dark:text-zinc-400' => ! $item['overdue']])>
+                        {{ $item['overdue'] ? __('Overdue since :date', ['date' => $item['due']]) : __('Due :date', ['date' => $item['due']]) }}
+                    </span>
+                @endif
+                <flux:icon name="chevron-right" variant="mini" class="text-zinc-400 rtl:rotate-180" />
+            </a>
+        @empty
+            <flux:text>{{ __('Nothing is waiting for you.') }}</flux:text>
+        @endforelse
+    </div>
+
     @can('manage-ncrs')
         <div class="space-y-3">
             <div>

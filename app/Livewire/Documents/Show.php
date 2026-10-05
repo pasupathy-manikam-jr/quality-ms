@@ -7,6 +7,7 @@ use App\Models\Document;
 use App\Models\DocumentRevision;
 use App\Models\IsoClause;
 use App\Models\User;
+use App\Support\Notify;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -153,7 +154,9 @@ class Show extends Component
     public function submit(): void
     {
         $this->saveDraft();
-        $this->editableWorking()->submit();
+        $revision = $this->editableWorking();
+        $revision->submit();
+        Notify::documentReviewRequested($revision);
 
         unset($this->document, $this->working);
         Flux::toast(variant: 'success', text: __('Sent for review.'));

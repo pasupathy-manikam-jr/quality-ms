@@ -50,6 +50,8 @@ Administrators can add **custom roles** under **Administration → Roles** and t
 
 The dashboard shows what needs attention today: open NCRs, overdue CAPAs, gauges due or overdue for calibration, certificates waiting for verification, inspections in progress, documents due for review, and documents you have been asked to read. Click a number to open that list.
 
+**Waiting for me** lists what needs you personally, overdue first: revisions, NCR dispositions and plans to approve (never your own work), CAPAs and actions you own, and your gauges due for calibration. You also get an email when a revision or disposition needs your approval, or when someone gives you a CAPA action.
+
 Below the numbers:
 
 - **Non-conformances by source** (last 90 days), largest first. Fixing the top one or two sources usually removes most problems.

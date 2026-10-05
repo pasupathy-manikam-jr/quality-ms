@@ -8,6 +8,7 @@ use App\Models\CapaAction;
 use App\Models\Document;
 use App\Models\Ncr;
 use App\Models\User;
+use App\Support\Notify;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -148,11 +149,12 @@ class Show extends Component
             'actionDueOn' => ['nullable', 'date_format:Y-m-d'],
         ], attributes: ['actionDescription' => __('action'), 'actionOwnerId' => __('owner'), 'actionDueOn' => __('due date')]);
 
-        $this->capa->actions()->create([
+        $action = $this->capa->actions()->create([
             'description' => $validated['actionDescription'],
-            'owner_id' => $validated['actionOwnerId'] ?: null,
+            'owner_id' => $validated['actionOwnerId'] ? (int) $validated['actionOwnerId'] : null,
             'due_on' => $validated['actionDueOn'] ?: null,
         ]);
+        Notify::capaActionAssigned($action, auth()->user()?->id);
 
         unset($this->capa);
         $this->reset('actionDescription', 'actionOwnerId', 'actionDueOn');
