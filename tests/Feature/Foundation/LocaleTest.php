@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Ncr;
 use App\Models\User;
 
 it('switches a signed-in user\'s language and remembers it on their account', function () {
@@ -47,7 +48,7 @@ it('never lets a language file shadow a phrase key (macOS file names ignore case
 });
 
 it('shows an Open button on list rows', function () {
-    App\Models\Ncr::factory()->create();
+    Ncr::factory()->create();
     $this->actingAs($this->userWithRole('viewer'));
 
     $this->get(route('ncrs.index'))->assertOk()->assertSee('Open');
