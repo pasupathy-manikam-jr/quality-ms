@@ -22,7 +22,7 @@
                     <flux:table.cell align="end">
                         <div class="flex justify-end gap-2">
                             @if ($revision->file_path)
-                                <flux:button size="sm" icon="arrow-down-tray" :href="route('document-revisions.file', $revision)">{{ __('Open') }}</flux:button>
+                                <flux:button size="sm" icon="arrow-down-tray" :href="route('document-revisions.file', $revision)">{{ __('ui_verbs.open') }}</flux:button>
                             @endif
                             <flux:button size="sm" variant="primary" icon="check" wire:click="acknowledge({{ $revision->id }})">{{ __('I have read it') }}</flux:button>
                         </div>

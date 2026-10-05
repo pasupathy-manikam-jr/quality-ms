@@ -46,6 +46,7 @@
             <flux:table.column sortable :sorted="$sortField === 'planned_on' || $sortField === ''" :direction="$sortDirection" wire:click="sort('planned_on')">{{ __('Planned') }}</flux:table.column>
             <flux:table.column align="end">{{ __('Findings') }}</flux:table.column>
             <flux:table.column>{{ __('Status') }}</flux:table.column>
+            <flux:table.column align="end"><span class="sr-only">{{ __('Actions') }}</span></flux:table.column>
         </flux:table.columns>
         <flux:table.rows>
             @forelse ($this->audits as $audit)
@@ -56,10 +57,11 @@
                     <flux:table.cell class="whitespace-nowrap">{{ $audit->planned_on->format('Y-m-d') }}</flux:table.cell>
                     <flux:table.cell align="end">{{ $audit->findings_count }}</flux:table.cell>
                     <flux:table.cell><x-status-badge :status="$audit->status" /></flux:table.cell>
+                    <flux:table.cell align="end"><flux:button size="sm" variant="ghost" icon="arrow-right" icon:variant="micro" inset="top bottom" :href="route('audits.show', $audit)" wire:navigate>{{ __('ui_verbs.open') }}</flux:button></flux:table.cell>
                 </flux:table.row>
             @empty
                 <flux:table.row>
-                    <flux:table.cell colspan="6" class="py-8 text-center">{{ __('No audits found.') }}</flux:table.cell>
+                    <flux:table.cell colspan="7" class="py-8 text-center">{{ __('No audits found.') }}</flux:table.cell>
                 </flux:table.row>
             @endforelse
         </flux:table.rows>

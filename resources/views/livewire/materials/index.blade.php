@@ -57,6 +57,8 @@
                     </flux:table.cell>
                     <flux:table.cell align="end">{{ $material->lots_count }}</flux:table.cell>
                     <flux:table.cell align="end">
+                        <div class="flex items-center justify-end gap-1">
+                            <flux:button size="sm" variant="ghost" icon="arrow-right" icon:variant="micro" inset="top bottom" :href="route('materials.show', $material)" wire:navigate>{{ __('ui_verbs.open') }}</flux:button>
                         <flux:dropdown position="bottom" align="end">
                             <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal" inset="top bottom" :aria-label="__('Actions')" />
                             <flux:menu>
@@ -66,6 +68,7 @@
                                 @endcan
                             </flux:menu>
                         </flux:dropdown>
+                        </div>
                     </flux:table.cell>
                 </flux:table.row>
             @empty

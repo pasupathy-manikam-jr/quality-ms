@@ -49,6 +49,7 @@
             <flux:table.column>{{ __('In progress') }}</flux:table.column>
             <flux:table.column>{{ __('Owner') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortField === 'next_review_on'" :direction="$sortDirection" wire:click="sort('next_review_on')">{{ __('Next review') }}</flux:table.column>
+            <flux:table.column align="end"><span class="sr-only">{{ __('Actions') }}</span></flux:table.column>
         </flux:table.columns>
 
         <flux:table.rows>
@@ -71,10 +72,11 @@
                     <flux:table.cell class="whitespace-nowrap">
                         <span @class(['font-medium text-amber-600 dark:text-amber-400' => $document->isDueForReview()])>{{ $document->next_review_on?->format('Y-m-d') ?? '—' }}</span>
                     </flux:table.cell>
+                    <flux:table.cell align="end"><flux:button size="sm" variant="ghost" icon="arrow-right" icon:variant="micro" inset="top bottom" :href="route('documents.show', $document)" wire:navigate>{{ __('ui_verbs.open') }}</flux:button></flux:table.cell>
                 </flux:table.row>
             @empty
                 <flux:table.row>
-                    <flux:table.cell colspan="7" class="py-8 text-center">{{ __('No documents found.') }}</flux:table.cell>
+                    <flux:table.cell colspan="8" class="py-8 text-center">{{ __('No documents found.') }}</flux:table.cell>
                 </flux:table.row>
             @endforelse
         </flux:table.rows>

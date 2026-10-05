@@ -33,3 +33,22 @@ it('has a translation, with the same placeholders, for every key in every langua
         expect($actual[0])->toBe($expected[0], "Placeholders differ in [{$locale}] {$key}");
     }
 })->with(['ms', 'zh']);
+
+it('never lets a language file shadow a phrase key (macOS file names ignore case)', function () {
+    $phrases = collect(json_decode((string) file_get_contents(lang_path('zh.json')), true))->keys();
+    $files = collect(glob(lang_path('en/*.php')))->map(fn (string $f) => strtolower(basename($f, '.php')));
+
+    expect($phrases->map(fn (string $k) => strtolower($k))->intersect($files)->values()->all())->toBe([]);
+
+    foreach (['en', 'ms', 'zh'] as $locale) {
+        app()->setLocale($locale);
+        expect(__('Actions'))->toBeString()->and(__('ui_verbs.open'))->toBeString()->not->toBe('ui_verbs.open');
+    }
+});
+
+it('shows an Open button on list rows', function () {
+    App\Models\Ncr::factory()->create();
+    $this->actingAs($this->userWithRole('viewer'));
+
+    $this->get(route('ncrs.index'))->assertOk()->assertSee('Open');
+});

@@ -66,6 +66,7 @@
             <flux:table.column>{{ __('Severity') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortField === 'created_at' || $sortField === ''" :direction="$sortDirection" wire:click="sort('created_at')">{{ __('Raised') }}</flux:table.column>
             <flux:table.column>{{ __('Status') }}</flux:table.column>
+            <flux:table.column align="end"><span class="sr-only">{{ __('Actions') }}</span></flux:table.column>
         </flux:table.columns>
 
         <flux:table.rows>
@@ -80,10 +81,11 @@
                     <flux:table.cell><x-status-badge :status="$ncr->severity" /></flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $ncr->created_at?->format('Y-m-d') }}</flux:table.cell>
                     <flux:table.cell><x-status-badge :status="$ncr->status" /></flux:table.cell>
+                    <flux:table.cell align="end"><flux:button size="sm" variant="ghost" icon="arrow-right" icon:variant="micro" inset="top bottom" :href="route('ncrs.show', $ncr)" wire:navigate>{{ __('ui_verbs.open') }}</flux:button></flux:table.cell>
                 </flux:table.row>
             @empty
                 <flux:table.row>
-                    <flux:table.cell colspan="6" class="py-8 text-center">{{ __('No non-conformances found.') }}</flux:table.cell>
+                    <flux:table.cell colspan="7" class="py-8 text-center">{{ __('No non-conformances found.') }}</flux:table.cell>
                 </flux:table.row>
             @endforelse
         </flux:table.rows>

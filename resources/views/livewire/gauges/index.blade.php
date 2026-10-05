@@ -66,6 +66,8 @@
                     <flux:table.cell class="whitespace-nowrap">{{ $gauge->next_due_on?->format('Y-m-d') ?? __('Never calibrated') }}</flux:table.cell>
                     <flux:table.cell><x-status-badge :status="$gauge->state()" /></flux:table.cell>
                     <flux:table.cell align="end">
+                        <div class="flex items-center justify-end gap-1">
+                            <flux:button size="sm" variant="ghost" icon="arrow-right" icon:variant="micro" inset="top bottom" :href="route('gauges.show', $gauge)" wire:navigate>{{ __('ui_verbs.open') }}</flux:button>
                         @canany(['edit-gauges', 'delete-gauges'])
                             <flux:dropdown position="bottom" align="end">
                                 <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal" inset="top bottom" :aria-label="__('Actions')" />
@@ -79,6 +81,7 @@
                                 </flux:menu>
                             </flux:dropdown>
                         @endcanany
+                        </div>
                     </flux:table.cell>
                 </flux:table.row>
             @empty

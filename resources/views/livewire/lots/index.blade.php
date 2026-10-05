@@ -51,6 +51,7 @@
             <flux:table.column>{{ __('Certificate') }}</flux:table.column>
             <flux:table.column>{{ __('Supplier') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortField === 'expires_on'" :direction="$sortDirection" wire:click="sort('expires_on')">{{ __('Expires') }}</flux:table.column>
+            <flux:table.column align="end"><span class="sr-only">{{ __('Actions') }}</span></flux:table.column>
         </flux:table.columns>
 
         <flux:table.rows>
@@ -78,10 +79,11 @@
                             —
                         @endif
                     </flux:table.cell>
+                    <flux:table.cell align="end"><flux:button size="sm" variant="ghost" icon="arrow-right" icon:variant="micro" inset="top bottom" :href="route('certificates.show', $lot->certificate_id)" wire:navigate>{{ __('ui_verbs.open') }}</flux:button></flux:table.cell>
                 </flux:table.row>
             @empty
                 <flux:table.row>
-                    <flux:table.cell colspan="6" class="py-8 text-center">{{ __('No :lots found.', ['lots' => strtolower($lotLabel)]) }}</flux:table.cell>
+                    <flux:table.cell colspan="7" class="py-8 text-center">{{ __('No :lots found.', ['lots' => strtolower($lotLabel)]) }}</flux:table.cell>
                 </flux:table.row>
             @endforelse
         </flux:table.rows>
