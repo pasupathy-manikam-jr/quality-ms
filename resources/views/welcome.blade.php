@@ -19,11 +19,6 @@
                             <flux:button :href="route('login')" variant="ghost" size="sm" wire:navigate>
                                 {{ __('Log in') }}
                             </flux:button>
-                            @if (Route::has('register'))
-                                <flux:button :href="route('register')" variant="primary" size="sm" wire:navigate>
-                                    {{ __('Register') }}
-                                </flux:button>
-                            @endif
                         @endauth
                     </nav>
                 @endif
