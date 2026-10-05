@@ -43,7 +43,7 @@ A red **\*** after a field name means the field must be filled in. When somethin
 | Auditor | Reads everything and runs internal audits. |
 | Viewer | Reads everything. |
 
-Administrators can add **custom roles** under **Administration → Roles** and tick exactly what each may do. The built-in roles above are fixed.
+Administrators can add **custom roles** under **Administration → Roles** and tick exactly what each may do. The built-in roles above are fixed: open one and choose **Copy as custom role** to start from its permissions.
 
 
 ## Dashboard

@@ -56,10 +56,10 @@
         </flux:table.rows>
     </flux:table>
 
-    <x-modal.form name="role-form" icon="shield-check" submit="save" width="xl"
+    <x-modal.form name="role-form" icon="shield-check" :submit="$readOnly ? 'duplicate' : 'save'" width="xl"
         :title="$readOnly ? \Database\Seeders\RolesSeeder::label($name) : ($editingId ? __('Edit role') : __('Add role'))"
-        :description="$readOnly ? __('Built-in roles are defined by the system and cannot be changed. Create a custom role to give a different set of permissions.') : __('Tick what people with this role may do. They always need View to open a module.')"
-        :submit-label="__('Save')">
+        :description="$readOnly ? __('Built-in roles are defined by the system and cannot be changed. Copy it as a custom role to give a different set of permissions.') : __('Tick what people with this role may do. They always need View to open a module.')"
+        :submit-label="$readOnly ? __('Copy as custom role') : __('Save')">
         @unless ($readOnly)
             <flux:input wire:model="name" :label="__('Role name')" badge="*" :placeholder="__('e.g. Store keeper')" />
         @endunless

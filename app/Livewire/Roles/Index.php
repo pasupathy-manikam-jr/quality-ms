@@ -79,6 +79,19 @@ class Index extends Component
         Flux::modal('role-form')->show();
     }
 
+    /**
+     * Turn the role being viewed into a new, editable custom role with the same permissions.
+     */
+    public function duplicate(): void
+    {
+        $this->authorize('create-roles');
+
+        $this->editingId = null;
+        $this->readOnly = false;
+        $this->name = __(':role (copy)', ['role' => RolesSeeder::label($this->name)]);
+        $this->resetValidation();
+    }
+
     public function save(): void
     {
         $this->authorize($this->editingId ? 'edit-roles' : 'create-roles');

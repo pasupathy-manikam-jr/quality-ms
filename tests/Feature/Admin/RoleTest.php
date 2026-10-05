@@ -66,3 +66,23 @@ it('only deletes custom roles nobody holds', function () {
 it('is for administrators only', function () {
     $this->actingAs($this->userWithRole('quality-manager'))->get(route('roles.index'))->assertForbidden();
 });
+
+it('copies a built-in role into an editable custom role', function () {
+    $inspector = Role::findByName('inspector', 'web');
+
+    Livewire::test(Index::class)
+        ->call('edit', $inspector->id)
+        ->assertSet('readOnly', true)
+        ->assertSeeHtml('value="create-inspections" wire:model="permissions" disabled')
+        ->call('duplicate')
+        ->assertSet('readOnly', false)
+        ->assertSet('editingId', null)
+        ->assertSet('name', 'Inspector (copy)')
+        ->assertDontSeeHtml('value="create-inspections" wire:model="permissions" disabled')
+        ->set('permissions', ['manage-certificates', 'create-certificates'])
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(Role::findByName('Inspector (copy)', 'web')->permissions->pluck('name')->sort()->values()->all())->toBe(['create-certificates', 'manage-certificates'])
+        ->and($inspector->fresh()?->permissions->count())->toBeGreaterThan(2, 'The built-in role is untouched.');
+});

@@ -43,7 +43,7 @@ Tanda **\*** merah selepas nama medan bermaksud medan itu mesti diisi. Jika ada 
 | Juruaudit | Membaca semua rekod dan menjalankan audit dalaman. |
 | Pembaca | Membaca semua rekod. |
 
-Pentadbir boleh menambah **peranan tersuai** di bawah **Pentadbiran → Peranan** dan menanda dengan tepat apa yang boleh dilakukan oleh setiap peranan. Peranan terbina dalam di atas adalah tetap.
+Pentadbir boleh menambah **peranan tersuai** di bawah **Pentadbiran → Peranan** dan menanda dengan tepat apa yang boleh dilakukan oleh setiap peranan. Peranan terbina dalam di atas adalah tetap: buka salah satu dan pilih **Salin sebagai peranan tersuai** untuk bermula daripada kebenarannya.
 
 ## Papan pemuka
 
