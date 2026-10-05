@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\HasCreator;
+use App\Models\Concerns\HasSignatures;
 use App\Models\Concerns\StoresUploads;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
@@ -35,7 +36,7 @@ use Illuminate\Validation\ValidationException;
  */
 class DocumentRevision extends Model
 {
-    use Auditable, HasCreator, StoresUploads;
+    use Auditable, HasCreator, HasSignatures, StoresUploads;
 
     public const UPLOAD_DIRECTORY = 'documents';
 

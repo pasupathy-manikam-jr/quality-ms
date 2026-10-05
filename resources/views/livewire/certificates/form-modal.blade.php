@@ -1,24 +1,24 @@
 {{-- Shared by the certificates list (add) and the certificate page (edit); both bind to $form (CertificateForm). --}}
 <x-modal.form name="certificate-form" :title="$title" submit="save" icon="document-check" busy="form.file">
-    <x-select wire:model="form.supplier_id" :label="__('Supplier')" :badge="__('Required')" :placeholder="__('Choose a supplier')">
+    <x-select wire:model="form.supplier_id" :label="__('Supplier')" badge="*" :placeholder="__('Choose a supplier')">
         @foreach ($this->suppliers as $option)
             <x-select.option :value="$option->id">{{ $option->name }}{{ $option->is_approved ? '' : ' ('.__('not approved').')' }}</x-select.option>
         @endforeach
     </x-select>
 
     <div class="grid gap-4 sm:grid-cols-2">
-        <flux:input wire:model="form.number" :label="__('Certificate number')" :badge="__('Required')" />
-        <flux:input wire:model="form.issued_on" :label="__('Issued on')" type="date" :badge="__('Required')" />
+        <flux:input wire:model="form.number" :label="__('Certificate number')" badge="*" />
+        <flux:input wire:model="form.issued_on" :label="__('Issued on')" type="date" badge="*" />
     </div>
 
-    <x-select wire:model.live="form.type" :label="__('Type')" :badge="__('Required')">
+    <x-select wire:model.live="form.type" :label="__('Type')" badge="*">
         @foreach (\App\Models\Certificate::TYPES as $value => $label)
             <x-select.option :value="$value">{{ __($label) }}</x-select.option>
         @endforeach
     </x-select>
 
     @if ($form->type === 'en10204-3.2')
-        <flux:input wire:model="form.third_party_inspector" :label="__('Third-party inspector')" :badge="__('Required')"
+        <flux:input wire:model="form.third_party_inspector" :label="__('Third-party inspector')" badge="*"
             :description="__('A 3.2 certificate is also signed by an independent inspector.')" />
     @endif
 

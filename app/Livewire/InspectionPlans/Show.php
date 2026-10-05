@@ -2,6 +2,7 @@
 
 namespace App\Livewire\InspectionPlans;
 
+use App\Livewire\Concerns\SignsRecords;
 use App\Models\InspectionPlan;
 use App\Models\InspectionPlanItem;
 use App\Support\Decimal;
@@ -19,6 +20,8 @@ use Livewire\Component;
  */
 class Show extends Component
 {
+    use SignsRecords;
+
     #[Locked]
     public int $planId;
 
@@ -54,7 +57,7 @@ class Show extends Component
     #[Computed]
     public function plan(): InspectionPlan
     {
-        return InspectionPlan::query()->with(['part', 'material', 'items', 'approver', 'creator'])->withCount('inspections')->findOrFail($this->planId);
+        return InspectionPlan::query()->with(['part', 'material', 'items', 'approver', 'creator', 'signatures'])->withCount('inspections')->findOrFail($this->planId);
     }
 
     /**
@@ -64,6 +67,14 @@ class Show extends Component
     public function revisions(): Collection
     {
         return $this->plan->siblings()->orderByDesc('revision')->get(['id', 'revision', 'status', 'approved_at']);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function signedActions(): array
+    {
+        return ['approve' => 'approved'];
     }
 
     public function create(): void
@@ -162,7 +173,7 @@ class Show extends Component
     {
         $this->authorize('approve-inspection-plans');
 
-        $this->plan->approve();
+        $this->signAs($this->plan, 'approved', fn () => $this->plan->approve());
 
         unset($this->plan, $this->revisions);
         Flux::toast(variant: 'success', text: __('Plan approved. Inspections can now use it.'));

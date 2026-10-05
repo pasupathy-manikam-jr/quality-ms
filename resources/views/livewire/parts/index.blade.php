@@ -72,12 +72,12 @@
     <x-modal.form name="part-form" :title="$editingId ? __('Edit part') : __('Add part')" submit="save" icon="squares-2x2">
         <div class="grid gap-4 sm:grid-cols-3">
             <div class="sm:col-span-2">
-                <flux:input wire:model="part_number" :label="__('Part number')" :badge="__('Required')" />
+                <flux:input wire:model="part_number" :label="__('Part number')" badge="*" />
             </div>
-            <flux:input wire:model="revision" :label="__('Revision')" :badge="__('Required')" />
+            <flux:input wire:model="revision" :label="__('Revision')" badge="*" />
         </div>
 
-        <flux:input wire:model="name" :label="__('Name')" :badge="__('Required')" />
+        <flux:input wire:model="name" :label="__('Name')" badge="*" />
 
         <x-select wire:model="material_id" :label="__('Material')" :description="__('Lots used for this part must be of this material.')">
             <x-select.option value="">{{ __('Not set') }}</x-select.option>

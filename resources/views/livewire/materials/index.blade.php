@@ -79,9 +79,9 @@
     @canany(['create-materials', 'edit-materials'])
     <x-modal.form name="material-form" :title="$editingId ? __('Edit material') : __('Add material')" submit="save" icon="cube">
         <div class="grid gap-4 sm:grid-cols-3">
-            <flux:input wire:model="code" :label="__('Code')" :badge="__('Required')" :placeholder="__('e.g. S355JR')" />
+            <flux:input wire:model="code" :label="__('Code')" badge="*" :placeholder="__('e.g. S355JR')" />
             <div class="sm:col-span-2">
-                <flux:input wire:model="name" :label="__('Name')" :badge="__('Required')" />
+                <flux:input wire:model="name" :label="__('Name')" badge="*" />
             </div>
         </div>
 

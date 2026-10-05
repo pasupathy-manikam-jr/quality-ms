@@ -64,6 +64,9 @@
                         </dd>
                     </div>
                 </dl>
+                @if ($effective)
+                    <x-signature.list :signatures="$document->revisions->firstWhere('id', $effective->id)?->signatures ?? collect()" />
+                @endif
             </flux:card>
 
             @if ($effective)
@@ -121,11 +124,12 @@
                         @if ($working->file_path)
                             <flux:link :href="route('document-revisions.file', $working)" icon="arrow-down-tray">{{ $working->file_name }}</flux:link>
                         @endif
+                        <x-signature.list :signatures="$working->signatures" />
                         @if ($working->status === 'in-review')
                             @can('approve-documents')
                                 <div class="flex flex-wrap justify-end gap-2">
                                     <flux:button wire:click="returnToDraft">{{ __('Return to draft') }}</flux:button>
-                                    <flux:button variant="primary" icon="check-circle" wire:click="approve">{{ __('Approve and make effective') }}</flux:button>
+                                    <flux:button variant="primary" icon="check-circle" wire:click="requestSignature('approve')">{{ __('Approve and make effective') }}</flux:button>
                                 </div>
                             @endcan
                             <flux:text class="text-xs">{{ __('Written by :name. Someone else must approve it.', ['name' => $working->creator?->name ?? '—']) }}</flux:text>
@@ -175,19 +179,19 @@
 
     @can('edit-documents')
     <x-modal.form name="document-form" :title="__('Edit document')" submit="save" icon="document-text" width="xl">
-        <flux:input wire:model="title" :label="__('Title')" :badge="__('Required')" />
+        <flux:input wire:model="title" :label="__('Title')" badge="*" />
         <div class="grid gap-4 sm:grid-cols-3">
-            <x-select wire:model="type" :label="__('Type')" :badge="__('Required')">
+            <x-select wire:model="type" :label="__('Type')" badge="*">
                 @foreach (\App\Models\Document::TYPES as $value)
                     <x-select.option :value="$value">{{ __(Str::headline($value)) }}</x-select.option>
                 @endforeach
             </x-select>
-            <x-select wire:model="owner_id" :label="__('Owner')" :badge="__('Required')">
+            <x-select wire:model="owner_id" :label="__('Owner')" badge="*">
                 @foreach ($this->users as $user)
                     <x-select.option :value="$user->id">{{ $user->name }}</x-select.option>
                 @endforeach
             </x-select>
-            <flux:input wire:model="review_interval_months" :label="__('Review every (months)')" :badge="__('Required')" inputmode="numeric" />
+            <flux:input wire:model="review_interval_months" :label="__('Review every (months)')" badge="*" inputmode="numeric" />
         </div>
         <flux:checkbox.group wire:model="clauseIds" :label="__('ISO 9001 clauses this document covers')">
             <div class="grid max-h-64 gap-1 overflow-y-auto sm:grid-cols-2">
@@ -207,5 +211,8 @@
             </div>
         </flux:checkbox.group>
     </x-modal.form>
+    @endcan
+    @can('approve-documents')
+        <x-signature.dialog />
     @endcan
 </section>

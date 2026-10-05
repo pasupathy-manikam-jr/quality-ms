@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Certificates;
 
+use App\Actions\Certificates\ReadCertificateFile;
+use App\Livewire\Concerns\SignsRecords;
 use App\Livewire\Forms\CertificateForm;
 use App\Models\Certificate;
 use App\Models\Lot;
@@ -17,6 +19,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use RuntimeException;
 
 /**
  * @property-read Certificate $certificate
@@ -25,7 +28,7 @@ use Livewire\WithFileUploads;
  */
 class Show extends Component
 {
-    use WithFileUploads;
+    use SignsRecords, WithFileUploads;
 
     #[Locked]
     public int $certificateId;
@@ -58,6 +61,13 @@ class Show extends Component
 
     public string $reason = '';
 
+    /** @var list<array{lot_number: string, size: string|null, quantity: string|null, quantity_unit: string|null, results: list<array{property: string, value: string}>}> what Claude read, editable before applying */
+    public array $extracted = [];
+
+    public string $extractedNotes = '';
+
+    public string $extractMaterialId = '';
+
     public function mount(Certificate $certificate): void
     {
         $this->certificateId = $certificate->id;
@@ -67,7 +77,7 @@ class Show extends Component
     public function certificate(): Certificate
     {
         return Certificate::query()
-            ->with(['supplier', 'decider', 'creator', 'lots.material.limits', 'lots.results'])
+            ->with(['supplier', 'decider', 'creator', 'lots.material.limits', 'lots.results', 'signatures'])
             ->findOrFail($this->certificateId);
     }
 
@@ -267,13 +277,106 @@ class Show extends Component
         Flux::toast(variant: 'success', text: __('Results saved.'));
     }
 
+    // Reading the file with Claude ----------------------------------------------------------
+
+    public function readFile(ReadCertificateFile $reader): void
+    {
+        $this->authorizeEdit();
+        abort_unless(ReadCertificateFile::isEnabled(), 404);
+
+        try {
+            $result = $reader->read($this->certificate);
+        } catch (RuntimeException $e) {
+            Flux::toast(variant: 'danger', text: $e->getMessage());
+
+            return;
+        }
+
+        $this->extracted = $result['lots'];
+        $this->extractedNotes = $result['notes'];
+        $this->extractMaterialId = (string) $this->certificate->lots->value('material_id');
+        $this->resetValidation();
+
+        Flux::modal('extract-review')->show();
+    }
+
+    /**
+     * Save what was read (after the person's edits): existing lots are matched by number, new
+     * ones get the chosen material; only properties that material has limits for are kept.
+     */
+    public function applyExtraction(): void
+    {
+        $this->authorizeEdit();
+
+        $this->validate([
+            'extracted' => ['required', 'array', 'max:50'],
+            'extracted.*.lot_number' => ['required', 'string', 'max:100', 'distinct'],
+            'extracted.*.size' => ['nullable', 'numeric', 'decimal:0,3', 'min:0', 'max:999999999'],
+            'extracted.*.quantity' => ['nullable', 'numeric', 'decimal:0,3', 'min:0', 'max:999999999999'],
+            'extracted.*.quantity_unit' => ['nullable', 'string', 'max:20'],
+            'extracted.*.results' => ['array', 'max:100'],
+            'extracted.*.results.*.property' => ['required', 'string', 'max:50'],
+            'extracted.*.results.*.value' => ['nullable', 'numeric', 'decimal:0,6', 'min:-999999999999', 'max:999999999999'],
+            'extractMaterialId' => ['required', 'integer', Rule::exists('materials', 'id')],
+        ], attributes: ['extractMaterialId' => __('material')]);
+
+        $certificate = $this->certificate;
+        $material = Material::query()->with('limits')->findOrFail((int) $this->extractMaterialId);
+        $skipped = [];
+
+        DB::transaction(function () use ($certificate, $material, &$skipped) {
+            foreach ($this->extracted as $row) {
+                $lot = $certificate->lots()->firstOrCreate(
+                    ['lot_number' => trim($row['lot_number'])],
+                    [
+                        'material_id' => $material->id,
+                        'size' => $material->size_label ? (($row['size'] ?? '') ?: null) : null,
+                        'quantity' => ($row['quantity'] ?? '') ?: null,
+                        'quantity_unit' => ($row['quantity_unit'] ?? '') ?: null,
+                    ],
+                );
+                $known = $lot->material()->with('limits')->firstOrFail()->limits->mapWithKeys(fn ($l) => [mb_strtolower($l->property) => $l->property]);
+
+                foreach ($row['results'] as $result) {
+                    $property = $known[mb_strtolower(trim($result['property']))] ?? null;
+                    $value = trim($result['value']);
+
+                    if ($property === null || $value === '') {
+                        $skipped[] = $result['property'];
+
+                        continue;
+                    }
+
+                    $lot->results()->updateOrCreate(['property' => $property], ['value' => $value]);
+                }
+            }
+
+            $certificate->audit('results-read-from-file', null, ['model' => config('services.anthropic.model'), 'lots' => count($this->extracted)]);
+        });
+
+        unset($this->certificate);
+        $this->reset('extracted', 'extractedNotes', 'extractMaterialId');
+        Flux::modal('extract-review')->close();
+        Flux::toast(variant: 'success', text: $skipped === []
+            ? __('Results saved. Check them against the certificate before verifying.')
+            : __('Results saved. Skipped (no limit for this material): :list.', ['list' => implode(', ', array_unique($skipped))]));
+    }
+
     // Decision ---------------------------------------------------------------------------
+
+    /**
+     * @return array<string, string>
+     */
+    protected function signedActions(): array
+    {
+        return ['verify' => 'verified'];
+    }
 
     public function verify(): void
     {
         $this->authorize('verify-certificates');
 
-        $this->certificate->transitionTo('verified');
+        $this->signAs($this->certificate, 'verified', fn () => $this->certificate->transitionTo('verified'));
 
         unset($this->certificate);
         Flux::toast(variant: 'success', text: __('Certificate verified. Its :lots can be used.', ['lots' => strtolower(Lot::label())]));
@@ -293,7 +396,7 @@ class Show extends Component
         $this->authorize('verify-certificates');
 
         $this->validate(['reason' => ['required', 'string', 'max:2000']]);
-        $this->certificate->transitionTo('rejected', $this->reason);
+        $this->signAs($this->certificate, 'rejected', fn () => $this->certificate->transitionTo('rejected', $this->reason));
 
         unset($this->certificate);
         Flux::modal('reject-form')->close();

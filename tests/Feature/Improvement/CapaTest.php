@@ -33,26 +33,26 @@ it('only advances when each stage has its disciplines, actions and effectiveness
     $capa = Capa::factory()->create();
     $page = Livewire::test(Show::class, ['capa' => $capa]);
 
-    $page->call('advance')->assertHasErrors('status');
+    $page->set('signaturePassword', 'password')->call('advance')->assertHasErrors('status');
 
-    $page->set('disciplines', disciplines(['d1_team', 'd2_problem']))->call('save')->call('advance')->assertHasNoErrors();
+    $page->set('disciplines', disciplines(['d1_team', 'd2_problem']))->call('save')->set('signaturePassword', 'password')->call('advance')->assertHasNoErrors();
     expect($capa->refresh()->status)->toBe('investigating');
 
     $page->set('disciplines', disciplines(['d1_team', 'd2_problem', 'd3_containment', 'd4_root_cause', 'd5_actions']))
-        ->call('save')->call('advance')
+        ->call('save')->set('signaturePassword', 'password')->call('advance')
         ->set('actionDescription', 'Lock tool counter')
         ->call('addAction');
     expect($capa->refresh()->status)->toBe('implementing');
 
     $page->set('disciplines', disciplines(['d1_team', 'd2_problem', 'd3_containment', 'd4_root_cause', 'd5_actions', 'd6_implementation']))
-        ->call('save')->call('advance')->assertHasErrors('status');
+        ->call('save')->set('signaturePassword', 'password')->call('advance')->assertHasErrors('status');
 
-    $page->call('toggleAction', $capa->actions()->sole()->id)->call('advance')->assertHasNoErrors();
+    $page->call('toggleAction', $capa->actions()->sole()->id)->set('signaturePassword', 'password')->call('advance')->assertHasNoErrors();
     expect($capa->refresh()->status)->toBe('verifying');
 
-    $page->set('disciplines', disciplines(array_keys(Capa::DISCIPLINES)))->call('save')->call('advance')->assertHasErrors('status');
+    $page->set('disciplines', disciplines(array_keys(Capa::DISCIPLINES)))->call('save')->set('signaturePassword', 'password')->call('advance')->assertHasErrors('status');
 
-    $page->set('effectiveness_notes', 'No recurrence in 3 batches.')->call('verifyEffectiveness')->call('advance')->assertHasNoErrors();
+    $page->set('effectiveness_notes', 'No recurrence in 3 batches.')->set('signaturePassword', 'password')->call('verifyEffectiveness')->set('signaturePassword', 'password')->call('advance')->assertHasNoErrors();
 
     expect($capa->refresh())->status->toBe('closed')->closed_at->not->toBeNull();
     Livewire::test(Show::class, ['capa' => $capa])->call('save')->assertForbidden();
@@ -62,8 +62,8 @@ it('only lets a verifier close or verify effectiveness', function () {
     $capa = Capa::factory()->status('verifying')->create(collect(Capa::DISCIPLINES)->keys()->mapWithKeys(fn ($f) => [$f => 'x'])->all());
     $this->actingAs($this->userWithRole('inspector'));
 
-    Livewire::test(Show::class, ['capa' => $capa])->call('verifyEffectiveness')->assertForbidden();
-    Livewire::test(Show::class, ['capa' => $capa])->call('advance')->assertForbidden();
+    Livewire::test(Show::class, ['capa' => $capa])->set('signaturePassword', 'password')->call('verifyEffectiveness')->assertForbidden();
+    Livewire::test(Show::class, ['capa' => $capa])->set('signaturePassword', 'password')->call('advance')->assertForbidden();
 });
 
 it('links further open NCRs for a recurring problem', function () {

@@ -102,9 +102,9 @@
     @canany(['create-suppliers', 'edit-suppliers'])
     <x-modal.form name="supplier-form" :title="$editingId ? __('Edit supplier') : __('Add supplier')" submit="save" icon="truck">
         <div class="grid gap-4 sm:grid-cols-3">
-            <flux:input wire:model="code" :label="__('Code')" :badge="__('Required')" />
+            <flux:input wire:model="code" :label="__('Code')" badge="*" />
             <div class="sm:col-span-2">
-                <flux:input wire:model="name" :label="__('Name')" :badge="__('Required')" />
+                <flux:input wire:model="name" :label="__('Name')" badge="*" />
             </div>
         </div>
 
@@ -118,7 +118,7 @@
         <flux:switch wire:model.live="is_approved" :label="__('Approved supplier')" />
 
         @if ($is_approved)
-            <flux:input wire:model="approved_on" :label="__('Approved on')" type="date" :badge="__('Required')" />
+            <flux:input wire:model="approved_on" :label="__('Approved on')" type="date" badge="*" />
         @endif
     </x-modal.form>
     @endcanany

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Inspections;
 
+use App\Livewire\Concerns\SignsRecords;
 use App\Models\Gauge;
 use App\Models\Inspection;
 use App\Models\InspectionPlanItem;
@@ -22,6 +23,8 @@ use Livewire\Component;
  */
 class Show extends Component
 {
+    use SignsRecords;
+
     #[Locked]
     public int $inspectionId;
 
@@ -46,7 +49,7 @@ class Show extends Component
     public function inspection(): Inspection
     {
         return Inspection::query()
-            ->with(['plan.items', 'plan.part', 'plan.material', 'lot.certificate', 'readings.gauge', 'creator'])
+            ->with(['plan.items', 'plan.part', 'plan.material', 'lot.certificate', 'readings.gauge', 'creator', 'signatures'])
             ->findOrFail($this->inspectionId);
     }
 
@@ -59,6 +62,14 @@ class Show extends Component
     public function usableGauges(): Collection
     {
         return Gauge::query()->where('status', 'active')->orderBy('code')->get()->filter->isUsable()->values();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function signedActions(): array
+    {
+        return ['complete' => 'inspected'];
     }
 
     public function save(): void
@@ -76,7 +87,8 @@ class Show extends Component
         $this->authorizeEdit();
 
         $this->storeReadings();
-        $this->inspection->complete();
+        $inspection = $this->inspection;
+        $this->signAs($inspection, 'inspected', fn () => $inspection->complete());
 
         unset($this->inspection);
         $failed = $this->inspection->status === 'failed';

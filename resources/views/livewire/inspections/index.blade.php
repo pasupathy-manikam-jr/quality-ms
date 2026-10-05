@@ -72,7 +72,7 @@
 
     @can('create-inspections')
     <x-modal.form name="inspection-form" :title="__('Start inspection')" submit="save" icon="clipboard-document-check" :submit-label="__('Start')">
-        <x-select wire:model.live="plan_id" :label="__('Plan')" :badge="__('Required')" :placeholder="__('Choose an approved plan')">
+        <x-select wire:model.live="plan_id" :label="__('Plan')" badge="*" :placeholder="__('Choose an approved plan')">
             @foreach ($this->plans as $plan)
                 <x-select.option :value="$plan->id">{{ $plan->title }} ({{ $plan->subjectLabel() }}, {{ __('rev :n', ['n' => $plan->revision]) }})</x-select.option>
             @endforeach
@@ -80,7 +80,7 @@
 
         @if ($plan_id !== '')
             <x-select wire:model="lot_id" :label="$lotLabel" :placeholder="__('None')"
-                :badge="$this->plans->firstWhere('id', (int) $plan_id)?->stage === 'receiving' ? __('Required') : null"
+                :badge="$this->plans->firstWhere('id', (int) $plan_id)?->stage === 'receiving' ? '*' : null"
                 :description="__('Only :lots from verified certificates that have not expired are listed.', ['lots' => strtolower($lotLabel)])">
                 <x-select.option value="">{{ __('None') }}</x-select.option>
                 @foreach ($this->lots as $lot)
@@ -96,7 +96,7 @@
             <flux:input wire:model="quantity" :label="__('Quantity')" inputmode="decimal" />
         </div>
 
-        <flux:input wire:model="inspected_on" :label="__('Inspection date')" type="date" :badge="__('Required')" />
+        <flux:input wire:model="inspected_on" :label="__('Inspection date')" type="date" badge="*" />
     </x-modal.form>
     @endcan
 </section>

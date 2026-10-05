@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GuideController;
 use App\Http\Controllers\LocaleController;
 use App\Livewire\Dashboard;
 use Illuminate\Support\Facades\Route;
@@ -9,6 +10,7 @@ Route::post('locale', [LocaleController::class, 'update'])->middleware('throttle
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('dashboard', Dashboard::class)->name('dashboard');
+    Route::get('guide', GuideController::class)->name('guide');
 
     // One file per module; each declares its own permission middleware.
     foreach (glob(__DIR__.'/modules/*.php') ?: [] as $module) {

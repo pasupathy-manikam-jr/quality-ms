@@ -71,21 +71,21 @@ it('walks an NCR from draft to closed with the right checks at each step', funct
     $ncr->update(['description' => 'Bolt holes undersize.']);
     $page->call('open')->assertHasNoErrors();
 
-    $page->call('approveDisposition')->assertHasErrors('status')
+    $page->set('signaturePassword', 'password')->call('approveDisposition')->assertHasErrors('status')
         ->set('disposition', 'use-as-is')
         ->call('saveDisposition')
         ->assertHasErrors(['disposition_notes' => 'required_if'])
         ->set('disposition', 'scrap')
         ->call('saveDisposition')
-        ->call('approveDisposition')
+        ->set('signaturePassword', 'password')->call('approveDisposition')
         ->assertHasNoErrors();
 
     $capa = Capa::factory()->create();
     $capa->ncrs()->attach($ncr);
-    $page->call('confirmStatus', 'closed')->call('changeStatus')->assertHasErrors('status');
+    $page->call('confirmStatus', 'closed')->set('signaturePassword', 'password')->call('changeStatus')->assertHasErrors('status');
 
     $capa->forceFill(['status' => 'closed'])->save();
-    $page->call('confirmStatus', 'closed')->set('notes', 'All scrapped.')->call('changeStatus')->assertHasNoErrors();
+    $page->call('confirmStatus', 'closed')->set('notes', 'All scrapped.')->set('signaturePassword', 'password')->call('changeStatus')->assertHasNoErrors();
 
     expect($ncr->refresh())
         ->status->toBe('closed')
@@ -99,10 +99,10 @@ it('needs a reason to cancel a draft', function () {
 
     Livewire::test(Show::class, ['ncr' => $ncr])
         ->call('confirmStatus', 'cancelled')
-        ->call('changeStatus')
+        ->set('signaturePassword', 'password')->call('changeStatus')
         ->assertHasErrors('status')
         ->set('notes', 'Raised twice.')
-        ->call('changeStatus')
+        ->set('signaturePassword', 'password')->call('changeStatus')
         ->assertHasNoErrors();
 
     expect($ncr->refresh()->status)->toBe('cancelled');
@@ -134,7 +134,7 @@ it('lets inspectors raise and work NCRs but not approve or close them', function
     $ncr = Ncr::factory()->status('open')->create(['disposition' => 'rework']);
     $this->actingAs($this->userWithRole('inspector'));
 
-    Livewire::test(Show::class, ['ncr' => $ncr])->call('approveDisposition')->assertForbidden();
+    Livewire::test(Show::class, ['ncr' => $ncr])->set('signaturePassword', 'password')->call('approveDisposition')->assertForbidden();
     Livewire::test(Show::class, ['ncr' => $ncr])->call('confirmStatus', 'closed')->assertForbidden();
     Livewire::test(Show::class, ['ncr' => $ncr])->call('startCapa')->assertForbidden();
     Livewire::test(Index::class)->call('create')->assertOk();

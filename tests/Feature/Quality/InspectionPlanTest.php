@@ -59,10 +59,10 @@ it('validates numeric characteristics: limits, order and nominal inside them', f
 it('needs a characteristic to approve, then locks and obsoletes the previous revision', function () {
     $plan = InspectionPlan::factory()->create();
 
-    Livewire::test(Show::class, ['plan' => $plan])->call('approve')->assertHasErrors('status');
+    Livewire::test(Show::class, ['plan' => $plan])->set('signaturePassword', 'password')->call('approve')->assertHasErrors('status');
 
     $plan->items()->create(['position' => 1, 'characteristic' => 'Finish', 'kind' => 'attribute']);
-    Livewire::test(Show::class, ['plan' => $plan])->call('approve')->assertHasNoErrors();
+    Livewire::test(Show::class, ['plan' => $plan])->set('signaturePassword', 'password')->call('approve')->assertHasNoErrors();
 
     expect($plan->refresh()->status)->toBe('approved');
     Livewire::test(Show::class, ['plan' => $plan])->call('create')->assertForbidden();
@@ -71,7 +71,7 @@ it('needs a characteristic to approve, then locks and obsoletes the previous rev
     expect($draft)->revision->toBe(2)->status->toBe('draft')
         ->and($draft->items()->count())->toBe(1);
 
-    Livewire::test(Show::class, ['plan' => $draft])->call('approve');
+    Livewire::test(Show::class, ['plan' => $draft])->set('signaturePassword', 'password')->call('approve');
 
     expect($plan->refresh()->status)->toBe('obsolete')
         ->and($draft->refresh()->status)->toBe('approved');
@@ -90,6 +90,6 @@ it('lets inspectors read plans but not change or approve them', function () {
 
     $this->get(route('inspection-plans.show', $plan))->assertOk();
     Livewire::test(Show::class, ['plan' => $plan])->call('create')->assertForbidden();
-    Livewire::test(Show::class, ['plan' => $plan])->call('approve')->assertForbidden();
+    Livewire::test(Show::class, ['plan' => $plan])->set('signaturePassword', 'password')->call('approve')->assertForbidden();
     Livewire::test(Index::class)->call('create')->assertForbidden();
 });

@@ -80,23 +80,23 @@
     @can('create-documents')
     <x-modal.form name="document-form" :title="__('Add document')" submit="save" icon="document-text" :submit-label="__('Create')">
         <div class="grid gap-4 sm:grid-cols-3">
-            <flux:input wire:model="number" :label="__('Number')" :badge="__('Required')" :placeholder="__('e.g. QP-075')" />
+            <flux:input wire:model="number" :label="__('Number')" badge="*" :placeholder="__('e.g. QP-075')" />
             <div class="sm:col-span-2">
-                <flux:input wire:model="title" :label="__('Title')" :badge="__('Required')" />
+                <flux:input wire:model="title" :label="__('Title')" badge="*" />
             </div>
         </div>
         <div class="grid gap-4 sm:grid-cols-3">
-            <x-select wire:model="docType" :label="__('Type')" :badge="__('Required')">
+            <x-select wire:model="docType" :label="__('Type')" badge="*">
                 @foreach (\App\Models\Document::TYPES as $value)
                     <x-select.option :value="$value">{{ __(Str::headline($value)) }}</x-select.option>
                 @endforeach
             </x-select>
-            <x-select wire:model="owner_id" :label="__('Owner')" :badge="__('Required')">
+            <x-select wire:model="owner_id" :label="__('Owner')" badge="*">
                 @foreach ($this->owners as $owner)
                     <x-select.option :value="$owner->id">{{ $owner->name }}</x-select.option>
                 @endforeach
             </x-select>
-            <flux:input wire:model="review_interval_months" :label="__('Review every (months)')" :badge="__('Required')" inputmode="numeric" />
+            <flux:input wire:model="review_interval_months" :label="__('Review every (months)')" badge="*" inputmode="numeric" />
         </div>
     </x-modal.form>
     @endcan

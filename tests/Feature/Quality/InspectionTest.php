@@ -47,7 +47,7 @@ it('passes when every reading is within specification', function () {
     Livewire::test(Show::class, ['inspection' => $this->inspection])
         ->set('values', readings($this->inspection, '10.01', '9.95'))
         ->set('gauges', [$this->items[0]->id => (string) $this->gauge->id])
-        ->call('complete')
+        ->set('signaturePassword', 'password')->call('complete')
         ->assertHasNoErrors();
 
     expect($this->inspection->refresh())
@@ -60,7 +60,7 @@ it('fails when any reading is out of specification, including attribute checks',
     Livewire::test(Show::class, ['inspection' => $this->inspection])
         ->set('values', readings($this->inspection, $first, '10.00', $visual))
         ->set('gauges', [$this->items[0]->id => (string) $this->gauge->id])
-        ->call('complete');
+        ->set('signaturePassword', 'password')->call('complete');
 
     expect($this->inspection->refresh()->status)->toBe('failed');
 })->with([
@@ -74,7 +74,7 @@ it('refuses to complete with readings missing', function () {
     Livewire::test(Show::class, ['inspection' => $this->inspection])
         ->set('values', ["{$hole->id}-1" => '10.00'])
         ->set('gauges', [$hole->id => (string) $this->gauge->id])
-        ->call('complete')
+        ->set('signaturePassword', 'password')->call('complete')
         ->assertHasErrors('status');
 
     expect($this->inspection->refresh()->status)->toBe('in-progress')
@@ -114,7 +114,7 @@ it('locks a completed inspection', function () {
     Livewire::test(Show::class, ['inspection' => $this->inspection])
         ->set('values', readings($this->inspection, '10.00', '10.00'))
         ->set('gauges', [$this->items[0]->id => (string) $this->gauge->id])
-        ->call('complete');
+        ->set('signaturePassword', 'password')->call('complete');
 
     Livewire::test(Show::class, ['inspection' => $this->inspection])->call('save')->assertForbidden();
 });

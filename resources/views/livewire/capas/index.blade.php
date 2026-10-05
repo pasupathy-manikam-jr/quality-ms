@@ -71,19 +71,19 @@
 
     @can('create-capas')
     <x-modal.form name="capa-form" :title="__('Add CAPA')" submit="save" icon="wrench-screwdriver" :submit-label="__('Create')">
-        <flux:input wire:model="title" :label="__('Title')" :badge="__('Required')" />
+        <flux:input wire:model="title" :label="__('Title')" badge="*" />
         <div class="grid gap-4 sm:grid-cols-3">
-            <x-select wire:model="type" :label="__('Type')" :badge="__('Required')">
+            <x-select wire:model="type" :label="__('Type')" badge="*">
                 @foreach (\App\Models\Capa::TYPES as $value)
                     <x-select.option :value="$value">{{ __(Str::headline($value)) }}</x-select.option>
                 @endforeach
             </x-select>
-            <x-select wire:model="owner_id" :label="__('Owner')" :badge="__('Required')">
+            <x-select wire:model="owner_id" :label="__('Owner')" badge="*">
                 @foreach ($this->owners as $owner)
                     <x-select.option :value="$owner->id">{{ $owner->name }}</x-select.option>
                 @endforeach
             </x-select>
-            <flux:input wire:model="due_on" :label="__('Due')" type="date" :badge="__('Required')" />
+            <flux:input wire:model="due_on" :label="__('Due')" type="date" badge="*" />
         </div>
     </x-modal.form>
     @endcan

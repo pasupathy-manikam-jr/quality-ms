@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\HasCreator;
+use App\Models\Concerns\HasSignatures;
 use Carbon\CarbonImmutable;
 use Database\Factories\InspectionPlanFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,7 +36,7 @@ use Illuminate\Validation\ValidationException;
 class InspectionPlan extends Model
 {
     /** @use HasFactory<InspectionPlanFactory> */
-    use Auditable, HasCreator, HasFactory;
+    use Auditable, HasCreator, HasFactory, HasSignatures;
 
     public const STAGES = ['receiving', 'in-process', 'final'];
 

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Ncrs;
 
+use App\Livewire\Concerns\SignsRecords;
 use App\Livewire\Forms\NcrForm;
 use App\Models\Capa;
 use App\Models\Ncr;
@@ -22,6 +23,8 @@ use Livewire\Component;
  */
 class Show extends Component
 {
+    use SignsRecords;
+
     #[Locked]
     public int $ncrId;
 
@@ -47,7 +50,7 @@ class Show extends Component
     public function ncr(): Ncr
     {
         return Ncr::query()
-            ->with(['sourceable', 'part', 'lot', 'supplier', 'creator', 'dispositionApprover', 'capas.owner'])
+            ->with(['sourceable', 'part', 'lot', 'supplier', 'creator', 'dispositionApprover', 'capas.owner', 'signatures'])
             ->findOrFail($this->ncrId);
     }
 
@@ -116,11 +119,19 @@ class Show extends Component
         Flux::toast(variant: 'success', text: __('Disposition saved. It now needs approval.'));
     }
 
+    /**
+     * @return array<string, string>
+     */
+    protected function signedActions(): array
+    {
+        return ['approveDisposition' => 'disposition-approved'];
+    }
+
     public function approveDisposition(): void
     {
         $this->authorize('approve-ncrs');
 
-        $this->ncr->transitionTo('disposition-approved');
+        $this->signAs($this->ncr, 'disposition-approved', fn () => $this->ncr->transitionTo('disposition-approved'));
 
         unset($this->ncr);
         Flux::toast(variant: 'success', text: __('Disposition approved.'));
@@ -142,7 +153,7 @@ class Show extends Component
         $this->authorize($this->pendingStatus === 'closed' ? 'approve-ncrs' : 'edit-ncrs');
 
         $this->validate(['notes' => ['nullable', 'string', 'max:5000']]);
-        $this->ncr->transitionTo($this->pendingStatus, $this->notes ?: null);
+        $this->signAs($this->ncr, $this->pendingStatus, fn () => $this->ncr->transitionTo($this->pendingStatus, $this->notes ?: null));
 
         unset($this->ncr);
         Flux::modal('confirm-ncr-status')->close();

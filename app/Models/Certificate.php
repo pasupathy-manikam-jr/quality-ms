@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\HasCreator;
+use App\Models\Concerns\HasSignatures;
 use App\Models\Concerns\StoresUploads;
 use Carbon\CarbonImmutable;
 use Database\Factories\CertificateFactory;
@@ -41,7 +42,7 @@ use Illuminate\Validation\ValidationException;
 class Certificate extends Model
 {
     /** @use HasFactory<CertificateFactory> */
-    use Auditable, HasCreator, HasFactory, StoresUploads;
+    use Auditable, HasCreator, HasFactory, HasSignatures, StoresUploads;
 
     public const UPLOAD_DIRECTORY = 'certificates';
 

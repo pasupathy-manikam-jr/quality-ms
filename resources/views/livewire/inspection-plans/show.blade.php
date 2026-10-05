@@ -19,7 +19,7 @@
         <div class="flex flex-wrap gap-2">
             @if ($plan->status === 'draft')
                 @can('approve-inspection-plans')
-                    <flux:button variant="primary" icon="check-circle" wire:click="approve" :disabled="$plan->items->isEmpty()">{{ __('Approve') }}</flux:button>
+                    <flux:button variant="primary" icon="check-circle" wire:click="requestSignature('approve')" :disabled="$plan->items->isEmpty()">{{ __('Approve') }}</flux:button>
                 @endcan
             @else
                 @can('create-inspection-plans')
@@ -54,6 +54,7 @@
                         </div>
                     @endforeach
                 </dl>
+                <x-signature.list :signatures="$plan->signatures" />
             </flux:card>
 
             @if ($this->revisions->isNotEmpty())
@@ -126,10 +127,10 @@
 
     @if ($canEdit)
     <x-modal.form name="item-form" :title="$editingId ? __('Edit characteristic') : __('Add characteristic')" submit="save" icon="list-bullet">
-        <flux:input wire:model="characteristic" :label="__('Characteristic')" :badge="__('Required')" :placeholder="__('e.g. Hole diameter Ø10')" />
+        <flux:input wire:model="characteristic" :label="__('Characteristic')" badge="*" :placeholder="__('e.g. Hole diameter Ø10')" />
 
         <div class="grid gap-4 sm:grid-cols-2">
-            <x-select wire:model.live="kind" :label="__('Type')" :badge="__('Required')">
+            <x-select wire:model.live="kind" :label="__('Type')" badge="*">
                 <x-select.option value="numeric">{{ __('Measured value') }}</x-select.option>
                 <x-select.option value="attribute">{{ __('OK / not OK') }}</x-select.option>
             </x-select>
@@ -147,7 +148,7 @@
         @endif
 
         <div class="grid gap-4 sm:grid-cols-2">
-            <flux:input wire:model="sample_size" :label="__('Samples per inspection')" :badge="__('Required')" inputmode="numeric" />
+            <flux:input wire:model="sample_size" :label="__('Samples per inspection')" badge="*" inputmode="numeric" />
             <div class="pt-7">
                 <flux:switch wire:model="is_critical" :label="__('Critical characteristic')" />
             </div>
@@ -159,5 +160,8 @@
 
     @can('approve-inspection-plans')
     <x-modal.confirm name="confirm-obsolete" :title="__('Make this plan obsolete?')" :text="__('No new inspections can be started against it. Past inspections are kept.')" confirm="makeObsolete" icon="archive-box-x-mark" :confirm-label="__('Make obsolete')" />
+    @endcan
+    @can('approve-inspection-plans')
+        <x-signature.dialog />
     @endcan
 </section>

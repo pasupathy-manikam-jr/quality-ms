@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\HasCreator;
+use App\Models\Concerns\HasSignatures;
 use App\Support\Sequence;
 use Carbon\CarbonImmutable;
 use Database\Factories\NcrFactory;
@@ -45,7 +46,7 @@ use Illuminate\Validation\ValidationException;
 class Ncr extends Model
 {
     /** @use HasFactory<NcrFactory> */
-    use Auditable, HasCreator, HasFactory;
+    use Auditable, HasCreator, HasFactory, HasSignatures;
 
     public const SOURCES = ['inspection', 'certificate', 'calibration', 'customer-complaint', 'supplier', 'internal-audit', 'other'];
 

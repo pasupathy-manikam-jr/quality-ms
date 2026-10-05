@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\HasCreator;
+use App\Models\Concerns\HasSignatures;
 use App\Support\Sequence;
 use Carbon\CarbonImmutable;
 use Database\Factories\CapaFactory;
@@ -46,7 +47,7 @@ use Illuminate\Validation\ValidationException;
 class Capa extends Model
 {
     /** @use HasFactory<CapaFactory> */
-    use Auditable, HasCreator, HasFactory;
+    use Auditable, HasCreator, HasFactory, HasSignatures;
 
     public const TYPES = ['corrective', 'preventive'];
 

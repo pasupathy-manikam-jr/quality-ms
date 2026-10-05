@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\HasCreator;
+use App\Models\Concerns\HasSignatures;
 use App\Support\Decimal;
 use App\Support\Sequence;
 use Carbon\CarbonImmutable;
@@ -34,7 +35,7 @@ use Illuminate\Validation\ValidationException;
 class Inspection extends Model
 {
     /** @use HasFactory<InspectionFactory> */
-    use Auditable, HasCreator, HasFactory;
+    use Auditable, HasCreator, HasFactory, HasSignatures;
 
     public const STATUSES = ['in-progress', 'passed', 'failed'];
 

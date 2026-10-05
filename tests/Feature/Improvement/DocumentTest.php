@@ -66,7 +66,7 @@ it('needs a file and a summary before review', function () {
 it('stops authors approving their own revision', function () {
     $document = inReview();
 
-    Livewire::test(Show::class, ['document' => $document])->call('approve')->assertHasErrors('status');
+    Livewire::test(Show::class, ['document' => $document])->set('signaturePassword', 'password')->call('approve')->assertHasErrors('status');
 
     expect($document->revisions()->sole()->status)->toBe('in-review');
 });
@@ -74,7 +74,7 @@ it('stops authors approving their own revision', function () {
 it('makes an approved revision effective, supersedes the old one and sets the review date', function () {
     $document = inReview();
     $this->actingAs($this->approver);
-    Livewire::test(Show::class, ['document' => $document])->call('approve')->assertHasNoErrors();
+    Livewire::test(Show::class, ['document' => $document])->set('signaturePassword', 'password')->call('approve')->assertHasNoErrors();
 
     expect($document->refresh()->next_review_on?->toDateString())->toBe(now()->addMonths(6)->toDateString());
 
@@ -86,7 +86,7 @@ it('makes an approved revision effective, supersedes the old one and sets the re
     $revisionB->submit();
 
     $this->actingAs($this->approver);
-    Livewire::test(Show::class, ['document' => $document])->call('approve');
+    Livewire::test(Show::class, ['document' => $document])->set('signaturePassword', 'password')->call('approve');
 
     expect($document->revisions()->pluck('status', 'revision')->all())->toBe(['B' => 'effective', 'A' => 'superseded']);
 });
@@ -100,7 +100,7 @@ it('allows one revision in progress at a time', function () {
 it('asks readers to read, lets them open the file and records their acknowledgement', function () {
     $document = inReview();
     $this->actingAs($this->approver);
-    Livewire::test(Show::class, ['document' => $document])->call('approve');
+    Livewire::test(Show::class, ['document' => $document])->set('signaturePassword', 'password')->call('approve');
     $reader = User::factory()->create();
     $outsider = User::factory()->create();
     $revision = $document->effectiveRevision()->sole();
@@ -122,7 +122,7 @@ it('asks readers to read, lets them open the file and records their acknowledgem
 it('lets the owner confirm a periodic review without a new revision', function () {
     $document = inReview();
     $this->actingAs($this->approver);
-    Livewire::test(Show::class, ['document' => $document])->call('approve');
+    Livewire::test(Show::class, ['document' => $document])->set('signaturePassword', 'password')->call('approve');
     $document->forceFill(['next_review_on' => now()->subDay()])->save();
 
     Livewire::test(Show::class, ['document' => $document])->call('confirmReview');
@@ -146,7 +146,7 @@ it('emails owners about documents due for review', function () {
 it('starts a document revision from a CAPA (D7) and links it back', function () {
     $document = inReview();
     $this->actingAs($this->approver);
-    Livewire::test(Show::class, ['document' => $document])->call('approve');
+    Livewire::test(Show::class, ['document' => $document])->set('signaturePassword', 'password')->call('approve');
     $capa = Capa::factory()->create();
 
     Livewire::test(CapaShow::class, ['capa' => $capa])
@@ -163,5 +163,5 @@ it('keeps viewers out of document changes', function () {
 
     $this->get(route('documents.show', $document))->assertOk();
     Livewire::test(Show::class, ['document' => $document])->call('edit')->assertForbidden();
-    Livewire::test(Show::class, ['document' => $document])->call('approve')->assertForbidden();
+    Livewire::test(Show::class, ['document' => $document])->set('signaturePassword', 'password')->call('approve')->assertForbidden();
 });

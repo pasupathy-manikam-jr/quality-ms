@@ -155,6 +155,9 @@
                         <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
                             {{ __('Settings') }}
                         </flux:menu.item>
+                        <flux:menu.item :href="route('guide')" icon="question-mark-circle" wire:navigate>
+                            {{ __('User guide') }}
+                        </flux:menu.item>
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />

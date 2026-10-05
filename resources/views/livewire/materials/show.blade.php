@@ -77,7 +77,7 @@
     <x-modal.form name="limit-form" :title="$editingId ? __('Edit limit') : __('Add limit')" submit="save" icon="adjustments-horizontal">
         <div class="grid gap-4 sm:grid-cols-3">
             <div class="sm:col-span-2">
-                <flux:input wire:model="property" :label="__('Property')" :badge="__('Required')" :placeholder="__('e.g. C, Yield, Moisture')" />
+                <flux:input wire:model="property" :label="__('Property')" badge="*" :placeholder="__('e.g. C, Yield, Moisture')" />
             </div>
             <flux:input wire:model="unit" :label="__('Unit')" :placeholder="__('e.g. %, MPa')" />
         </div>

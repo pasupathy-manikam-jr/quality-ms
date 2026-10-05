@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Capas;
 
+use App\Livewire\Concerns\SignsRecords;
 use App\Models\Capa;
 use App\Models\CapaAction;
 use App\Models\Document;
@@ -24,6 +25,8 @@ use Livewire\Component;
  */
 class Show extends Component
 {
+    use SignsRecords;
+
     #[Locked]
     public int $capaId;
 
@@ -61,7 +64,7 @@ class Show extends Component
     #[Computed]
     public function capa(): Capa
     {
-        return Capa::query()->with(['owner', 'verifier', 'ncrs', 'actions.owner', 'creator'])->findOrFail($this->capaId);
+        return Capa::query()->with(['owner', 'verifier', 'ncrs', 'actions.owner', 'creator', 'signatures'])->findOrFail($this->capaId);
     }
 
     /**
@@ -87,6 +90,14 @@ class Show extends Component
             ->orderByDesc('id')
             ->limit(200)
             ->get(['id', 'number', 'title']);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function signedActions(): array
+    {
+        return ['advance' => 'closed'];
     }
 
     public function save(): void
@@ -117,9 +128,10 @@ class Show extends Component
 
         if ($this->capa->nextStatus() === 'closed') {
             $this->authorize('verify-capas');
+            $this->signAs($this->capa, 'closed', fn () => $this->capa->advance());
+        } else {
+            $this->capa->advance();
         }
-
-        $this->capa->advance();
 
         unset($this->capa);
         Flux::toast(variant: 'success', text: __('CAPA moved to :status.', ['status' => __($this->capa->status)]));
@@ -212,7 +224,7 @@ class Show extends Component
             'effectiveness_notes' => ['required', 'string', 'max:5000'],
         ]);
 
-        $this->capa->verifyEffectiveness($this->effectiveness_check_on, $this->effectiveness_notes);
+        $this->signAs($this->capa, 'effectiveness-verified', fn () => $this->capa->verifyEffectiveness($this->effectiveness_check_on, $this->effectiveness_notes));
 
         unset($this->capa);
         Flux::toast(variant: 'success', text: __('Effectiveness verified. The CAPA can now be closed.'));

@@ -89,9 +89,9 @@
     @canany(['create-gauges', 'edit-gauges'])
     <x-modal.form name="gauge-form" :title="$editingId ? __('Edit gauge') : __('Add gauge')" submit="save" icon="scale">
         <div class="grid gap-4 sm:grid-cols-3">
-            <flux:input wire:model="code" :label="__('Code')" :badge="__('Required')" :placeholder="__('Tag number')" />
+            <flux:input wire:model="code" :label="__('Code')" badge="*" :placeholder="__('Tag number')" />
             <div class="sm:col-span-2">
-                <flux:input wire:model="description" :label="__('Description')" :badge="__('Required')" />
+                <flux:input wire:model="description" :label="__('Description')" badge="*" />
             </div>
         </div>
 
@@ -111,7 +111,7 @@
             </x-select>
         </div>
 
-        <flux:input wire:model="interval_days" :label="__('Calibration interval (days)')" :badge="__('Required')" inputmode="numeric" class="max-w-40" />
+        <flux:input wire:model="interval_days" :label="__('Calibration interval (days)')" badge="*" inputmode="numeric" class="max-w-40" />
     </x-modal.form>
     @endcanany
 

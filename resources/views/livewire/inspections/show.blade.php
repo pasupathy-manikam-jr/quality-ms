@@ -21,9 +21,7 @@
         @if ($canEdit)
             <div class="flex gap-2">
                 <flux:button icon="check" wire:click="save">{{ __('Save readings') }}</flux:button>
-                <flux:modal.trigger name="confirm-complete">
-                    <flux:button variant="primary" icon="flag">{{ __('Complete inspection') }}</flux:button>
-                </flux:modal.trigger>
+                <flux:button wire:click="requestSignature('complete')" variant="primary" icon="flag">{{ __('Complete inspection') }}</flux:button>
             </div>
         @endif
     </div>
@@ -55,6 +53,7 @@
                         </div>
                     @endforeach
                 </dl>
+                <x-signature.list :signatures="$inspection->signatures" />
             </flux:card>
 
             @if ($inspection->status === 'failed')
@@ -137,6 +136,6 @@
     </div>
 
     @if ($canEdit)
-    <x-modal.confirm name="confirm-complete" :title="__('Complete this inspection?')" :text="__('Your readings are saved first. Every reading must be entered, and the result is final.')" confirm="complete" variant="primary" icon="flag" :confirm-label="__('Complete')" />
+    <x-signature.dialog />
     @endif
 </section>

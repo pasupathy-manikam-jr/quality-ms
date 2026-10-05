@@ -25,7 +25,7 @@
         <div class="flex flex-wrap gap-2">
         <flux:button icon="printer" :href="route('capas.print', $capa)" target="_blank">{{ __('8D report') }}</flux:button>
         @if ($canEdit && $next && ($next !== 'closed' || auth()->user()->can('verify-capas')))
-            <flux:button variant="primary" icon="arrow-right" wire:click="advance" :disabled="$blockers !== []">
+            <flux:button variant="primary" icon="arrow-right" :wire:click="$next === 'closed' ? 'requestSignature(\'advance\')' : 'advance'" :disabled="$blockers !== []">
                 {{ $next === 'closed' ? __('Close CAPA') : __('Move to :status', ['status' => __(Str::headline($next))]) }}
             </flux:button>
         @endif
@@ -61,6 +61,8 @@
                 <flux:error name="status" />
             </flux:card>
 
+            <x-signature.list :signatures="$capa->signatures" />
+
             {{-- Linked NCRs --}}
             <flux:card class="space-y-3">
                 <flux:heading>{{ __('Non-conformances') }}</flux:heading>
@@ -95,8 +97,9 @@
                     <flux:text class="whitespace-pre-line text-sm">{{ $capa->effectiveness_notes }}</flux:text>
                 @elseif ($capa->status === 'verifying' && auth()->user()->can('verify-capas'))
                     <form wire:submit="verifyEffectiveness" class="space-y-3" novalidate>
-                        <flux:input wire:model="effectiveness_check_on" type="date" :label="__('Checked on')" :badge="__('Required')" />
-                        <flux:textarea wire:model="effectiveness_notes" rows="3" :label="__('Evidence the problem has not come back')" :badge="__('Required')" />
+                        <flux:input wire:model="effectiveness_check_on" type="date" :label="__('Checked on')" badge="*" />
+                        <flux:textarea wire:model="effectiveness_notes" rows="3" :label="__('Evidence the problem has not come back')" badge="*" />
+                        <x-signature.password />
                         <flux:button type="submit" variant="primary" icon="check-badge">{{ __('Verify effectiveness') }}</flux:button>
                     </form>
                 @else
@@ -110,7 +113,7 @@
             <form wire:submit="save" class="space-y-6" novalidate>
                 <flux:card class="space-y-4">
                     <flux:heading>{{ __('Details') }}</flux:heading>
-                    <flux:input wire:model="title" :label="__('Title')" :badge="__('Required')" :disabled="! $canEdit" />
+                    <flux:input wire:model="title" :label="__('Title')" badge="*" :disabled="! $canEdit" />
                     <div class="grid gap-4 sm:grid-cols-3">
                         <x-select wire:model="type" :label="__('Type')" :disabled="! $canEdit">
                             @foreach (\App\Models\Capa::TYPES as $value)
@@ -216,4 +219,8 @@
             </flux:card>
         </div>
     </div>
+
+    @can('verify-capas')
+        <x-signature.dialog />
+    @endcan
 </section>

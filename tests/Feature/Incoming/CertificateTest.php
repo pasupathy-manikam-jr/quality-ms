@@ -85,7 +85,7 @@ class CertificateTest extends TestCase
         $this->actingAs($manager);
 
         Livewire::test(Show::class, ['certificate' => $lot->certificate])
-            ->call('verify')
+            ->set('signaturePassword', 'password')->call('verify')
             ->assertHasNoErrors();
 
         $certificate = $lot->certificate->refresh();
@@ -105,7 +105,7 @@ class CertificateTest extends TestCase
         $this->actingAs($this->userWithRole('quality-manager'));
 
         Livewire::test(Show::class, ['certificate' => $lot->certificate])
-            ->call('verify')
+            ->set('signaturePassword', 'password')->call('verify')
             ->assertHasErrors('status');
 
         $this->assertSame('received', $lot->certificate->refresh()->status);
@@ -118,10 +118,10 @@ class CertificateTest extends TestCase
 
         Livewire::test(Show::class, ['certificate' => $certificate])
             ->call('openReject')
-            ->call('reject')
+            ->set('signaturePassword', 'password')->call('reject')
             ->assertHasErrors(['reason' => 'required'])
             ->set('reason', 'Carbon over limit; supplier to resend.')
-            ->call('reject')
+            ->set('signaturePassword', 'password')->call('reject')
             ->assertHasNoErrors();
 
         $certificate->refresh();
@@ -160,7 +160,7 @@ class CertificateTest extends TestCase
 
         $this->assertSame(['C' => '0.180000', 'Mn' => '1.410000'], $lot->results()->pluck('value', 'property')->all());
 
-        $page->call('verify')->assertForbidden();
+        $page->set('signaturePassword', 'password')->call('verify')->assertForbidden();
     }
 
     public function test_viewer_can_look_but_not_change(): void

@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    /*
+    | Claude reads supplier certificate files (PDF or scan) into lots and results for a
+    | person to check. Leave the key empty to switch the feature off.
+    */
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY'),
+        'model' => env('ANTHROPIC_MODEL', 'claude-opus-5-5'),
+    ],
+
 ];

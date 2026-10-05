@@ -68,3 +68,54 @@ select:focus[data-flux-control] {
 [x-cloak] {
     display: none !important;
 }
+
+/* User guide (resources/guide/*.md rendered by GuideController). */
+.guide {
+    @apply text-sm leading-relaxed text-zinc-700 dark:text-zinc-300;
+}
+.guide h1 {
+    @apply mb-3 text-2xl font-semibold text-zinc-900 dark:text-white;
+}
+.guide h2 {
+    @apply mt-10 mb-3 scroll-mt-6 border-b border-zinc-200 pb-2 text-lg font-semibold text-zinc-900 dark:border-zinc-700 dark:text-white;
+}
+.guide h3 {
+    @apply mt-6 mb-2 scroll-mt-6 font-semibold text-zinc-900 dark:text-white;
+}
+.guide p,
+.guide ul,
+.guide ol,
+.guide table {
+    @apply my-3;
+}
+.guide ul {
+    @apply list-disc space-y-1 ps-5;
+}
+.guide ol {
+    @apply list-decimal space-y-1 ps-5;
+}
+.guide strong {
+    @apply font-semibold text-zinc-900 dark:text-white;
+}
+.guide table {
+    @apply w-full text-start;
+}
+.guide th {
+    @apply border-b border-zinc-200 py-2 pe-4 text-start font-medium text-zinc-900 dark:border-zinc-700 dark:text-white;
+}
+.guide td {
+    @apply border-b border-zinc-100 py-2 pe-4 align-top dark:border-zinc-800;
+}
+.guide .heading-permalink {
+    @apply ms-2 text-zinc-300 no-underline opacity-0 dark:text-zinc-600;
+}
+.guide h2:hover .heading-permalink,
+.guide h3:hover .heading-permalink {
+    @apply opacity-100;
+}
+.guide .guide-toc {
+    @apply my-6 grid list-none gap-1 rounded-xl border border-zinc-200 bg-zinc-50 p-4 ps-4 sm:grid-cols-2 dark:border-zinc-700 dark:bg-zinc-900/40;
+}
+.guide .guide-toc a {
+    @apply text-zinc-700 hover:text-zinc-900 hover:underline dark:text-zinc-300 dark:hover:text-white;
+}

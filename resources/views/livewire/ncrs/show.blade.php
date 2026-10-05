@@ -75,6 +75,7 @@
                     </div>
                 @endif
             </dl>
+            <x-signature.list :signatures="$ncr->signatures" />
         </flux:card>
 
         <div class="space-y-6 lg:col-span-2">
@@ -94,16 +95,16 @@
 
                     @if ($ncr->status === 'open' && auth()->user()->can('edit-ncrs'))
                         <form wire:submit="saveDisposition" class="space-y-4" novalidate>
-                            <x-select wire:model.live="disposition" :label="__('What happens to the affected material')" :badge="__('Required')" :placeholder="__('Choose a disposition')">
+                            <x-select wire:model.live="disposition" :label="__('What happens to the affected material')" badge="*" :placeholder="__('Choose a disposition')">
                                 @foreach (\App\Models\Ncr::DISPOSITIONS as $value)
                                     <x-select.option :value="$value">{{ __(Str::headline($value)) }}</x-select.option>
                                 @endforeach
                             </x-select>
-                            <flux:textarea wire:model="disposition_notes" :label="__('Notes')" rows="2" :badge="$disposition === 'use-as-is' ? __('Required') : null" />
+                            <flux:textarea wire:model="disposition_notes" :label="__('Notes')" rows="2" :badge="$disposition === 'use-as-is' ? '*' : null" />
                             <div class="flex flex-wrap justify-end gap-2">
                                 <flux:button type="submit">{{ __('Save disposition') }}</flux:button>
                                 @can('approve-ncrs')
-                                    <flux:button variant="primary" icon="check" wire:click="approveDisposition" :disabled="$ncr->disposition === null">{{ __('Approve disposition') }}</flux:button>
+                                    <flux:button variant="primary" icon="check" wire:click="requestSignature('approveDisposition')" :disabled="$ncr->disposition === null">{{ __('Approve disposition') }}</flux:button>
                                 @endcan
                             </div>
                         </form>
@@ -163,8 +164,13 @@
         <x-modal.form name="confirm-ncr-status" :title="$pendingStatus === 'closed' ? __('Close this NCR?') : __('Cancel this NCR?')" submit="changeStatus" :icon="$pendingStatus === 'closed' ? 'check-circle' : 'x-circle'" :variant="$pendingStatus === 'closed' ? 'primary' : 'danger'" :submit-label="__('Confirm')" width="md">
             <flux:textarea wire:model="notes" rows="3"
                 :label="$pendingStatus === 'closed' ? __('Closure notes') : __('Reason')"
-                :badge="$pendingStatus === 'cancelled' ? __('Required') : null" />
+                :badge="$pendingStatus === 'cancelled' ? '*' : null" />
+            <x-signature.password />
             <flux:error name="status" />
         </x-modal.form>
     @endcanany
+
+    @can('approve-ncrs')
+        <x-signature.dialog />
+    @endcan
 </section>

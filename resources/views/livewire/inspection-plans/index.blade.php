@@ -76,32 +76,32 @@
 
     @can('create-inspection-plans')
     <x-modal.form name="plan-form" :title="__('Add plan')" submit="save" icon="clipboard-document-list" :submit-label="__('Create')">
-        <x-select wire:model.live="subject_type" :label="__('Plan for')" :badge="__('Required')">
+        <x-select wire:model.live="subject_type" :label="__('Plan for')" badge="*">
             <x-select.option value="part">{{ __('A part') }}</x-select.option>
             <x-select.option value="material">{{ __('A purchased material') }}</x-select.option>
         </x-select>
 
         @if ($subject_type === 'part')
-            <x-select wire:model="part_id" :label="__('Part')" :badge="__('Required')" :placeholder="__('Choose a part')">
+            <x-select wire:model="part_id" :label="__('Part')" badge="*" :placeholder="__('Choose a part')">
                 @foreach ($this->parts as $part)
                     <x-select.option :value="$part->id">{{ $part->label() }} · {{ $part->name }}</x-select.option>
                 @endforeach
             </x-select>
         @else
-            <x-select wire:model="material_id" :label="__('Material')" :badge="__('Required')" :placeholder="__('Choose a material')">
+            <x-select wire:model="material_id" :label="__('Material')" badge="*" :placeholder="__('Choose a material')">
                 @foreach ($this->materials as $material)
                     <x-select.option :value="$material->id">{{ $material->code }} · {{ $material->name }}</x-select.option>
                 @endforeach
             </x-select>
         @endif
 
-        <x-select wire:model="planStage" :label="__('Stage')" :badge="__('Required')">
+        <x-select wire:model="planStage" :label="__('Stage')" badge="*">
             @foreach (\App\Models\InspectionPlan::STAGES as $value)
                 <x-select.option :value="$value">{{ __(Str::headline($value)) }}</x-select.option>
             @endforeach
         </x-select>
 
-        <flux:input wire:model="title" :label="__('Title')" :badge="__('Required')" :placeholder="__('e.g. Bracket final inspection')" />
+        <flux:input wire:model="title" :label="__('Title')" badge="*" :placeholder="__('e.g. Bracket final inspection')" />
     </x-modal.form>
     @endcan
 </section>

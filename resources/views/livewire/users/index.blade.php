@@ -86,16 +86,16 @@
 
     @canany(['create-users', 'edit-users'])
     <x-modal.form name="user-form" :title="$editingId ? __('Edit user') : __('Add user')" submit="save" icon="user">
-        <flux:input wire:model="name" :label="__('Name')" :badge="__('Required')" />
-        <flux:input wire:model="email" :label="__('Email')" type="email" :badge="__('Required')" />
+        <flux:input wire:model="name" :label="__('Name')" badge="*" />
+        <flux:input wire:model="email" :label="__('Email')" type="email" badge="*" />
 
-        <x-select wire:model="userRole" :label="__('Role')" :badge="__('Required')" :placeholder="__('Choose a role')">
+        <x-select wire:model="userRole" :label="__('Role')" badge="*" :placeholder="__('Choose a role')">
             @foreach ($this->roles as $value => $label)
                 <x-select.option :value="$value">{{ __($label) }}</x-select.option>
             @endforeach
         </x-select>
 
-        <flux:input wire:model="password" :label="__('Password')" type="password" viewable :badge="$editingId ? null : __('Required')"
+        <flux:input wire:model="password" :label="__('Password')" type="password" viewable :badge="$editingId ? null : '*'"
             :description="$editingId ? __('Leave blank to keep the current password.') : null" />
         <flux:input wire:model="password_confirmation" :label="__('Confirm password')" type="password" viewable />
     </x-modal.form>

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Documents;
 
+use App\Livewire\Concerns\SignsRecords;
 use App\Models\Document;
 use App\Models\DocumentRevision;
 use App\Models\IsoClause;
@@ -25,7 +26,7 @@ use Livewire\WithFileUploads;
  */
 class Show extends Component
 {
-    use WithFileUploads;
+    use SignsRecords, WithFileUploads;
 
     #[Locked]
     public int $documentId;
@@ -58,7 +59,7 @@ class Show extends Component
     public function document(): Document
     {
         return Document::query()
-            ->with(['owner', 'clauses', 'revisions.approver', 'revisions.creator', 'revisions.capa', 'effectiveRevision.readers'])
+            ->with(['owner', 'clauses', 'revisions.approver', 'revisions.creator', 'revisions.capa', 'revisions.signatures', 'effectiveRevision.readers'])
             ->findOrFail($this->documentId);
     }
 
@@ -84,6 +85,14 @@ class Show extends Component
     public function isoClauses(): Collection
     {
         return IsoClause::query()->orderBy('id')->get();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function signedActions(): array
+    {
+        return ['approve' => 'approved'];
     }
 
     public function edit(): void
@@ -164,7 +173,8 @@ class Show extends Component
     {
         $this->authorize('approve-documents');
 
-        $this->workingRevision()->approve();
+        $revision = $this->workingRevision();
+        $this->signAs($revision, 'approved', fn () => $revision->approve());
 
         unset($this->document, $this->working);
         Flux::toast(variant: 'success', text: __('Revision approved and now effective.'));

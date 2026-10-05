@@ -74,7 +74,7 @@
                 @if ($canEdit && $audit->status === 'in-progress')
                     <form wire:submit="addFinding" class="space-y-3 border-t border-zinc-200 pt-4 dark:border-zinc-700" novalidate>
                         <div class="grid gap-3 sm:grid-cols-2">
-                            <x-select wire:model="type" :label="__('Type')" :badge="__('Required')">
+                            <x-select wire:model="type" :label="__('Type')" badge="*">
                                 @foreach (\App\Models\AuditFinding::TYPES as $value)
                                     <x-select.option :value="$value">{{ __(Str::headline($value)) }}</x-select.option>
                                 @endforeach
@@ -86,7 +86,7 @@
                                 @endforeach
                             </x-select>
                         </div>
-                        <flux:textarea wire:model="description" :label="__('What was found, with the evidence')" rows="3" :badge="__('Required')" />
+                        <flux:textarea wire:model="description" :label="__('What was found, with the evidence')" rows="3" badge="*" />
                         <flux:text class="text-xs">{{ __('Nonconformities raise an NCR straight away. Findings cannot be changed afterwards.') }}</flux:text>
                         <div class="flex justify-end">
                             <flux:button type="submit" icon="plus">{{ __('Add finding') }}</flux:button>

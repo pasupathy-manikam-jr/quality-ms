@@ -22,7 +22,7 @@
             @if ($certificate->isEditable())
                 @can('verify-certificates')
                     <flux:button variant="danger" icon="x-circle" wire:click="openReject">{{ __('Reject') }}</flux:button>
-                    <flux:button variant="primary" icon="check-circle" wire:click="verify" :disabled="$issues !== []">{{ __('Verify') }}</flux:button>
+                    <flux:button variant="primary" icon="check-circle" wire:click="requestSignature('verify')" :disabled="$issues !== []">{{ __('Verify') }}</flux:button>
                 @endcan
             @endif
             @if ($canEdit || ($certificate->isEditable() && auth()->user()->can('delete-certificates')))
@@ -75,6 +75,7 @@
                         </dd>
                     </div>
                 </dl>
+                <x-signature.list :signatures="$certificate->signatures" />
             </flux:card>
 
             @if ($certificate->isEditable())
@@ -109,7 +110,15 @@
             <div class="flex items-center justify-between">
                 <flux:heading>{{ $lotLabel }}</flux:heading>
                 @if ($canEdit)
-                    <flux:button size="sm" icon="plus" wire:click="addLot">{{ __('Add :lot', ['lot' => strtolower($lotLabel)]) }}</flux:button>
+                    <div class="flex gap-2">
+                        @if ($certificate->file_path && \App\Actions\Certificates\ReadCertificateFile::isEnabled())
+                            <flux:button size="sm" icon="sparkles" wire:click="readFile" wire:loading.attr="disabled" wire:target="readFile">
+                                <span wire:loading.remove wire:target="readFile">{{ __('Read from file') }}</span>
+                                <span wire:loading wire:target="readFile">{{ __('Reading…') }}</span>
+                            </flux:button>
+                        @endif
+                        <flux:button size="sm" icon="plus" wire:click="addLot">{{ __('Add :lot', ['lot' => strtolower($lotLabel)]) }}</flux:button>
+                    </div>
                 @endif
             </div>
 
@@ -192,14 +201,14 @@
     @include('livewire.certificates.form-modal', ['title' => __('Edit certificate')])
 
     <x-modal.form name="lot-form" :title="$lotId ? __('Edit :lot', ['lot' => strtolower($lotLabel)]) : __('Add :lot', ['lot' => strtolower($lotLabel)])" submit="saveLot" icon="archive-box">
-        <x-select wire:model.live="material_id" :label="__('Material')" :badge="__('Required')" :placeholder="__('Choose a material')">
+        <x-select wire:model.live="material_id" :label="__('Material')" badge="*" :placeholder="__('Choose a material')">
             @foreach ($this->materials as $material)
                 <x-select.option :value="$material->id">{{ $material->code }} · {{ $material->name }}</x-select.option>
             @endforeach
         </x-select>
 
         <div class="grid gap-4 sm:grid-cols-2">
-            <flux:input wire:model="lot_number" :label="$lotLabel" :badge="__('Required')" />
+            <flux:input wire:model="lot_number" :label="$lotLabel" badge="*" />
             @if ($this->selectedMaterial()?->size_label)
                 <flux:input wire:model="size" :label="$this->selectedMaterial()->size_label" inputmode="decimal"
                     :description="__('Limits that depend on size use this.')" />
@@ -229,14 +238,52 @@
 
     @can('verify-certificates')
     <x-modal.form name="reject-form" :title="__('Reject certificate')" :description="__('The :lots on it must not be used. This cannot be undone.', ['lots' => strtolower($lotLabel)])" submit="reject" icon="x-circle" variant="danger" :submit-label="__('Reject')">
-        <flux:textarea wire:model="reason" :label="__('Reason')" :badge="__('Required')" rows="3" />
+        <flux:textarea wire:model="reason" :label="__('Reason')" badge="*" rows="3" />
+        <x-signature.password />
     </x-modal.form>
 
+    <x-signature.dialog />
     @endcan
 
     @if ($canEdit)
     <x-modal.confirm name="confirm-lot-delete" :title="__('Remove this :lot?', ['lot' => strtolower($lotLabel)])" :text="__('Its results are removed with it.')" confirm="deleteLot" icon="trash" :confirm-label="__('Remove')" />
 
+    <x-modal.form name="extract-review" icon="sparkles" submit="applyExtraction" width="xl"
+        :title="__('Check what was read')"
+        :description="__('Compare every value with the certificate and correct anything wrong. Nothing is saved until you apply.')"
+        :submit-label="__('Apply results')">
+        @if ($extractedNotes !== '')
+            <flux:callout variant="warning" icon="information-circle" :heading="__('Notes from the reader')" :text="$extractedNotes" />
+        @endif
+
+        <x-select wire:model="extractMaterialId" :label="__('Material for new :lots', ['lots' => strtolower($lotLabel)])" badge="*" :placeholder="__('Choose a material')"
+            :description="__('Existing :lots keep their material. Results without a limit for the material are skipped.', ['lots' => strtolower($lotLabel)])">
+            @foreach ($this->materials as $material)
+                <x-select.option :value="$material->id">{{ $material->code }} · {{ $material->name }}</x-select.option>
+            @endforeach
+        </x-select>
+        <flux:error name="extracted" />
+
+        @foreach ($extracted as $i => $row)
+            <div wire:key="extracted-{{ $i }}" class="space-y-3 rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
+                <div class="grid gap-3 sm:grid-cols-4">
+                    <flux:input wire:model="extracted.{{ $i }}.lot_number" :label="$lotLabel" badge="*" />
+                    <flux:input wire:model="extracted.{{ $i }}.size" :label="__('Size')" inputmode="decimal" />
+                    <flux:input wire:model="extracted.{{ $i }}.quantity" :label="__('Quantity')" inputmode="decimal" />
+                    <flux:input wire:model="extracted.{{ $i }}.quantity_unit" :label="__('Unit')" />
+                </div>
+                @if ($row['results'] !== [])
+                    <div class="grid gap-3 sm:grid-cols-3">
+                        @foreach ($row['results'] as $j => $result)
+                            <flux:input wire:key="extracted-{{ $i }}-{{ $j }}" wire:model="extracted.{{ $i }}.results.{{ $j }}.value" inputmode="decimal" :label="$result['property']" />
+                        @endforeach
+                    </div>
+                @else
+                    <flux:text class="text-sm">{{ __('No results read for this :lot.', ['lot' => strtolower($lotLabel)]) }}</flux:text>
+                @endif
+            </div>
+        @endforeach
+    </x-modal.form>
     @endif
 
     @can('delete-certificates')

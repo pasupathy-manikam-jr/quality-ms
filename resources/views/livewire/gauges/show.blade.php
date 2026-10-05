@@ -159,19 +159,19 @@
     @can('calibrate-gauges')
     <x-modal.form name="calibration-form" :title="__('Record calibration')" submit="saveCalibration" icon="wrench-screwdriver" busy="file">
         <div class="grid gap-4 sm:grid-cols-2">
-            <flux:input wire:model="performed_on" :label="__('Calibrated on')" type="date" :badge="__('Required')" />
-            <x-select wire:model.live="result" :label="__('Result')" :badge="__('Required')">
+            <flux:input wire:model="performed_on" :label="__('Calibrated on')" type="date" badge="*" />
+            <x-select wire:model.live="result" :label="__('Result')" badge="*">
                 <x-select.option value="pass">{{ __('Pass') }}</x-select.option>
                 <x-select.option value="adjusted">{{ __('Pass after adjustment') }}</x-select.option>
                 <x-select.option value="fail">{{ __('Fail') }}</x-select.option>
             </x-select>
         </div>
 
-        <flux:input wire:model="performed_by" :label="__('Calibrated by')" :badge="__('Required')" :placeholder="__('Your name or the external lab')" />
+        <flux:input wire:model="performed_by" :label="__('Calibrated by')" badge="*" :placeholder="__('Your name or the external lab')" />
 
-        <flux:textarea wire:model="as_found" :label="__('As found')" rows="2" :badge="in_array($result, ['adjusted', 'fail'], true) ? __('Required') : null" />
+        <flux:textarea wire:model="as_found" :label="__('As found')" rows="2" :badge="in_array($result, ['adjusted', 'fail'], true) ? '*' : null" />
         @if ($result === 'adjusted')
-            <flux:textarea wire:model="as_left" :label="__('As left')" rows="2" :badge="__('Required')" />
+            <flux:textarea wire:model="as_left" :label="__('As left')" rows="2" badge="*" />
         @endif
 
         @if ($result === 'fail')

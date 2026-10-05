@@ -64,15 +64,15 @@
 
     @can('create-audits')
     <x-modal.form name="audit-form" :title="__('Plan audit')" submit="save" icon="magnifying-glass-circle" :submit-label="__('Plan')" width="xl">
-        <flux:input wire:model="title" :label="__('Title')" :badge="__('Required')" :placeholder="__('e.g. Receiving inspection process')" />
+        <flux:input wire:model="title" :label="__('Title')" badge="*" :placeholder="__('e.g. Receiving inspection process')" />
         <flux:textarea wire:model="scope" :label="__('Scope')" rows="2" />
         <div class="grid gap-4 sm:grid-cols-2">
-            <x-select wire:model="lead_auditor_id" :label="__('Lead auditor')" :badge="__('Required')">
+            <x-select wire:model="lead_auditor_id" :label="__('Lead auditor')" badge="*">
                 @foreach ($this->users as $user)
                     <x-select.option :value="$user->id">{{ $user->name }}</x-select.option>
                 @endforeach
             </x-select>
-            <flux:input wire:model="planned_on" type="date" :label="__('Planned for')" :badge="__('Required')" />
+            <flux:input wire:model="planned_on" type="date" :label="__('Planned for')" badge="*" />
         </div>
         <flux:checkbox.group wire:model="clauseIds" :label="__('ISO 9001 clauses in scope')">
             <div class="grid max-h-56 gap-1 overflow-y-auto sm:grid-cols-2">
