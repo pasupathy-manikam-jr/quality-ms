@@ -1,0 +1,31 @@
+{
+    "parts": [
+        {"part_number": "BRK-100", "revision": "B", "name": "Mounting bracket", "material": "S355JR"},
+        {"part_number": "HSG-220", "revision": "A", "name": "Pump housing, moulded", "material": "PA66-GF30"}
+    ],
+    "plans": [
+        {
+            "part": "BRK-100", "stage": "final", "title": "Bracket final inspection",
+            "items": [
+                {"characteristic": "Hole diameter Ø10", "kind": "numeric", "method": "Caliper", "unit": "mm", "nominal": "10", "min": "9.95", "max": "10.05", "sample_size": 3, "is_critical": true},
+                {"characteristic": "Overall length", "kind": "numeric", "method": "Caliper", "unit": "mm", "nominal": "120", "min": "119.8", "max": "120.2", "sample_size": 1, "is_critical": false},
+                {"characteristic": "Surface hardness", "kind": "numeric", "method": "Rockwell C", "unit": "HRC", "min": "38", "max": "45", "sample_size": 1, "is_critical": true},
+                {"characteristic": "Weld spatter / burrs", "kind": "attribute", "method": "Visual", "sample_size": 1, "is_critical": false}
+            ]
+        },
+        {
+            "material": "PA66-GF30", "stage": "receiving", "title": "Resin receiving check",
+            "items": [
+                {"characteristic": "Bags sealed and undamaged", "kind": "attribute", "method": "Visual", "sample_size": 1, "is_critical": true},
+                {"characteristic": "Label matches PO and CoA", "kind": "attribute", "method": "Visual", "sample_size": 1, "is_critical": true}
+            ]
+        }
+    ],
+    "inspections": [
+        {"plan": "Bracket final inspection", "days_ago": 30, "reference": "WO-2026-0871", "quantity": "50",
+         "readings": {"Hole diameter Ø10": [["CAL-001", "10.01"], ["CAL-001", "9.99"], ["CAL-001", "10.02"]], "Overall length": [["CAL-001", "120.05"]], "Surface hardness": [["HRD-002", "41.5"]], "Weld spatter / burrs": [[null, true]]}},
+        {"plan": "Resin receiving check", "days_ago": 10, "lot": "PA-2409-131", "quantity": "1000",
+         "readings": {"Bags sealed and undamaged": [[null, true]], "Label matches PO and CoA": [[null, true]]}},
+        {"plan": "Bracket final inspection", "days_ago": 0, "reference": "WO-2026-0934", "quantity": "40", "readings": {}}
+    ]
+}

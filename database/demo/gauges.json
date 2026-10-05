@@ -1,0 +1,12 @@
+[
+    {"code": "CAL-001", "description": "Digital caliper", "type": "Caliper", "measuring_range": "0–150 mm", "resolution": "0.01 mm", "location": "Receiving inspection", "interval_days": 365, "owner": "inspector",
+     "calibrations": [{"days_ago": 400, "performed_by": "Metrologi Lab Sdn Bhd", "result": "pass"}, {"days_ago": 40, "performed_by": "Metrologi Lab Sdn Bhd", "result": "pass", "as_found": "Within ±0.02 mm at 25/50/100/150 mm"}]},
+    {"code": "MIC-014", "description": "Outside micrometer", "type": "Micrometer", "measuring_range": "25–50 mm", "resolution": "0.001 mm", "location": "CNC cell 2", "interval_days": 180, "owner": "inspector",
+     "calibrations": [{"days_ago": 172, "performed_by": "In-house (gauge blocks)", "result": "adjusted", "as_found": "+0.004 mm at 50 mm", "as_left": "Zero reset, within ±0.002 mm"}]},
+    {"code": "HGT-003", "description": "Height gauge", "type": "Height gauge", "measuring_range": "0–300 mm", "resolution": "0.01 mm", "location": "QC lab", "interval_days": 365, "owner": "quality-manager",
+     "calibrations": [{"days_ago": 380, "performed_by": "Metrologi Lab Sdn Bhd", "result": "pass"}]},
+    {"code": "HRD-002", "description": "Rockwell hardness tester", "type": "Hardness tester", "measuring_range": "HRC 20–70", "resolution": "0.1 HRC", "location": "QC lab", "interval_days": 365, "owner": "quality-manager",
+     "calibrations": [{"days_ago": 20, "performed_by": "Metrologi Lab Sdn Bhd", "result": "fail", "as_found": "Reads +2.1 HRC on 45 HRC block"}]},
+    {"code": "TPG-M8", "description": "Thread plug gauge M8x1.25 6H", "type": "Thread gauge", "measuring_range": "M8x1.25", "resolution": null, "location": "Assembly", "interval_days": 365, "owner": null,
+     "calibrations": []}
+]

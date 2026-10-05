@@ -1,0 +1,7 @@
+[
+    {"number": "QM-001", "title": "Quality manual", "type": "policy", "clauses": ["4.3", "4.4", "5.2"], "approved_months_ago": 12, "summary": "Initial issue"},
+    {"number": "QP-075", "title": "Control of documented information", "type": "procedure", "clauses": ["7.5"], "approved_months_ago": 6, "summary": "Initial issue"},
+    {"number": "QP-087", "title": "Control of nonconforming output", "type": "procedure", "clauses": ["8.7", "10.2"], "approved_months_ago": 3, "summary": "Initial issue"},
+    {"number": "WI-715", "title": "Gauge calibration and handling", "type": "work-instruction", "clauses": ["7.1.5"], "approved_months_ago": 2, "summary": "Initial issue"},
+    {"number": "WI-842", "title": "Receiving inspection of purchased material", "type": "work-instruction", "clauses": ["8.4", "8.6"], "approved_months_ago": null, "summary": "Add certificate check against spec limits"}
+]

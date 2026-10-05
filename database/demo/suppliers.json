@@ -1,0 +1,5 @@
+[
+    {"code": "SUP-001", "name": "Seri Mutiara Steel Sdn Bhd", "contact_name": "Ahmad Faizal", "email": "qa@serimutiara.example.com", "phone": "+60 3-5521 8800", "is_approved": true, "approved_on": "2025-03-12"},
+    {"code": "SUP-002", "name": "Lembah Polymers Sdn Bhd", "contact_name": "Tan Mei Ling", "email": "quality@lembahpolymers.example.com", "phone": "+60 4-6432 1190", "is_approved": true, "approved_on": "2025-06-02"},
+    {"code": "SUP-003", "name": "Jaya Fasteners Trading", "contact_name": "Rajesh Kumar", "email": "sales@jayafasteners.example.com", "phone": "+60 7-3354 2207", "is_approved": false, "approved_on": null}
+]

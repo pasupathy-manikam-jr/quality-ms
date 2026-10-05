@@ -1,0 +1,30 @@
+[
+    {
+        "supplier": "SUP-001", "number": "SMS-MTC-24-08817", "type": "en10204-3.1", "issued_on": "2026-09-02", "po_number": "PO-2026-0412", "status": "received",
+        "lots": [
+            {"material": "S355JR", "lot_number": "H24-11873", "size": "12", "quantity": "18", "quantity_unit": "plates",
+             "results": {"C": "0.26", "Mn": "1.41", "Si": "0.21", "P": "0.018", "S": "0.009", "CEV": "0.44", "Yield": "372", "UTS": "528", "Elongation": "26"}}
+        ]
+    },
+    {
+        "supplier": "SUP-001", "number": "SMS-MTC-24-08902", "type": "en10204-3.1", "issued_on": "2026-09-10", "po_number": "PO-2026-0431", "status": "verified",
+        "lots": [
+            {"material": "S355JR", "lot_number": "H24-11902", "size": "20", "quantity": "24", "quantity_unit": "plates",
+             "results": {"C": "0.17", "Mn": "1.38", "Si": "0.19", "P": "0.014", "S": "0.006", "CEV": "0.41", "Yield": "368", "UTS": "512", "Elongation": "27"}}
+        ]
+    },
+    {
+        "supplier": "SUP-002", "number": "LP-COA-2409-117", "type": "coa", "issued_on": "2026-09-14", "po_number": "PO-2026-0450", "status": "received",
+        "lots": [
+            {"material": "PA66-GF30", "lot_number": "PA-2409-117", "quantity": "1000", "quantity_unit": "kg", "expires_on": "2027-03-14",
+             "results": {"Moisture": "0.35", "Glass content": "30.1", "Density": "1.36"}}
+        ]
+    },
+    {
+        "supplier": "SUP-002", "number": "LP-COA-2409-131", "type": "coa", "issued_on": "2026-09-21", "po_number": "PO-2026-0458", "status": "received",
+        "lots": [
+            {"material": "PA66-GF30", "lot_number": "PA-2409-131", "quantity": "1000", "quantity_unit": "kg", "expires_on": "2027-03-21",
+             "results": {"Moisture": "0.12", "Glass content": "29.8", "Density": "1.36"}}
+        ]
+    }
+]
