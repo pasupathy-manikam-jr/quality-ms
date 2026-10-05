@@ -139,4 +139,4 @@ Each profile is a set of `database/demo/*.json` files.
 SPC charts, gage R&R (MSA), PPAP/APQP, multi-tenancy, ERP integrations. Add them when a real user needs them.
 
 ## Licence
-AGPL-3.0 (the same as OpenQMS) keeps hosted forks open. Decide before the first public push.
+MIT (see `LICENSE`).

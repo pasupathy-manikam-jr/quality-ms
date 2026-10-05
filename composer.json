@@ -1,11 +1,17 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/livewire-starter-kit",
+    "name": "pasupathy-manikam-jr/quality-ms",
     "type": "project",
-    "description": "The official Laravel starter kit for Livewire.",
+    "description": "Open-source quality management system (QMS) for manufacturers: material certificates, inspections, calibration, NCR, CAPA/8D, ISO 9001 document control and internal audits.",
     "keywords": [
+        "qms",
+        "quality-management",
+        "iso-9001",
+        "capa",
+        "ncr",
+        "calibration",
         "laravel",
-        "framework"
+        "livewire"
     ],
     "license": "MIT",
     "require": {

@@ -89,4 +89,4 @@ To serve from a subfolder (e.g. `https://example.com/quality-ms`), build with `A
 
 ## Licence
 
-To be decided before the repository is made public.
+[MIT](LICENSE).
