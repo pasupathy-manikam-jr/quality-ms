@@ -129,6 +129,20 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Demo Accounts
+    |--------------------------------------------------------------------------
+    |
+    | Password of the seeded <role>@example.com accounts, and whether the login
+    | page offers them as one-click "Quick login" choices. Never on live.
+    |
+    */
+
+    'demo_password' => env('DEMO_PASSWORD', 'Zx123456'),
+
+    'demo_logins' => (bool) env('DEMO_LOGINS', false),
+
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),

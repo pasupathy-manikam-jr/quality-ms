@@ -7,8 +7,18 @@
 
         <x-passkey-verify />
 
-        <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-6" novalidate>
+        <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-6" novalidate
+            x-data="{ logins: @js($demoLogins ?? []), picked: null }"
+            x-init="$watch('picked', email => { const l = logins.find(l => l.email === email); $root.querySelector('[name=email]').value = l.email; $root.querySelector('[name=password]').value = l.password })">
             @csrf
+
+            @if (! empty($demoLogins))
+                <flux:radio.group :label="__('Quick login')" x-model="picked" data-test="quick-login">
+                    @foreach ($demoLogins as $login)
+                        <flux:radio :value="$login['email']" :label="$login['name']" :description="$login['email']" />
+                    @endforeach
+                </flux:radio.group>
+            @endif
 
             <!-- Email Address -->
             <flux:input

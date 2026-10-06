@@ -3,6 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Fortify\Features;
 use Tests\TestCase;
@@ -77,5 +78,39 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect(route('home'));
 
         $this->assertGuest();
+    }
+
+    public function test_quick_login_is_hidden_by_default(): void
+    {
+        config(['app.demo_logins' => false]);
+
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertViewHas('demoLogins', [])
+            ->assertDontSee('admin@example.com');
+    }
+
+    public function test_quick_login_lists_the_demo_accounts_when_enabled(): void
+    {
+        config(['app.demo_logins' => true, 'app.demo_password' => 'secret-demo']);
+
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertViewHas('demoLogins', array_values(DatabaseSeeder::logins()))
+            ->assertSee('Quick login')
+            ->assertSee('quality-manager@example.com')
+            ->assertSee('secret-demo');
+    }
+
+    public function test_seeded_demo_login_can_authenticate(): void
+    {
+        config(['app.demo_password' => 'secret-demo']);
+        $this->seed();
+        $login = DatabaseSeeder::logins()['admin'];
+
+        $this->post(route('login.store'), ['email' => $login['email'], 'password' => $login['password']])
+            ->assertSessionHasNoErrors();
+
+        $this->assertAuthenticated();
     }
 }

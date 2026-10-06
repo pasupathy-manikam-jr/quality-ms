@@ -26,6 +26,20 @@ class DatabaseSeeder extends Seeder
     ];
 
     /**
+     * One demo account per role: <role>@example.com, password from config('app.demo_password').
+     *
+     * @return array<string, array{name: string, email: string, password: string}>
+     */
+    public static function logins(): array
+    {
+        $password = (string) config('app.demo_password');
+
+        return collect(RolesSeeder::ROLES)
+            ->map(fn ($permissions, string $role) => ['name' => Str::headline($role), 'email' => "{$role}@example.com", 'password' => $password])
+            ->all();
+    }
+
+    /**
      * Seed the application's database. Safe to run more than once. Model events stay on,
      * so seeded records get their numbers, creators and audit trail like any other.
      */
@@ -33,13 +47,12 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([RolesSeeder::class, IsoClauseSeeder::class]);
 
-        // One demo account per role: <role>@example.com / Zx123456.
-        $password = Hash::make('Zx123456');
+        $password = Hash::make(config('app.demo_password'));
 
-        foreach (array_keys(RolesSeeder::ROLES) as $role) {
+        foreach (self::logins() as $role => $login) {
             User::query()->firstOrCreate(
-                ['email' => "{$role}@example.com"],
-                ['name' => Str::headline($role), 'password' => $password, 'email_verified_at' => now()],
+                ['email' => $login['email']],
+                ['name' => $login['name'], 'password' => $password, 'email_verified_at' => now()],
             )->syncRoles([$role]);
         }
 
