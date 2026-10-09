@@ -16,7 +16,7 @@
             <flux:button size="sm" role="tab" :aria-selected="$status === $value ? 'true' : 'false'"
                 :variant="$status === $value ? 'primary' : 'ghost'" wire:click="$set('status', '{{ $value }}')">
                 {{ $label }}
-                <flux:badge size="sm" class="ms-1">{{ $value === '' ? array_sum($counts) : ($counts[$value] ?? 0) }}</flux:badge>
+                <flux:badge size="sm" @class(['ms-1', '!bg-white/25 !text-white' => $status === $value])>{{ $value === '' ? array_sum($counts) : ($counts[$value] ?? 0) }}</flux:badge>
             </flux:button>
         @endforeach
     </div>

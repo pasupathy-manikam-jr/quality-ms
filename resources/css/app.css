@@ -9,30 +9,42 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Safety-signage palette (ISO 7010 colours): blue is the brand, yellow means
+       "needs action", green and red only ever mean pass and fail. */
+    --font-sans: 'Archivo', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-display: 'Archivo Narrow', 'Archivo', ui-sans-serif, system-ui, sans-serif;
 
-    --color-zinc-50: #fafafa;
-    --color-zinc-100: #f5f5f5;
-    --color-zinc-200: #e5e5e5;
-    --color-zinc-300: #d4d4d4;
-    --color-zinc-400: #a3a3a3;
-    --color-zinc-500: #737373;
-    --color-zinc-600: #525252;
-    --color-zinc-700: #404040;
-    --color-zinc-800: #262626;
-    --color-zinc-900: #171717;
-    --color-zinc-950: #0a0a0a;
+    --color-signal: #0b4f9c;
+    --color-signal-deep: #083b75;
+    --color-safety: #ffc20e;
+    --color-pass: #1f8a4c;
+    --color-fail: #c62828;
+    --color-paper: #f6f7f9;
+    --color-ink: #16202b;
 
-    --color-accent: var(--color-neutral-800);
-    --color-accent-content: var(--color-neutral-800);
+    /* Neutrals tinted towards the brand blue, so greys read as steel rather than flat grey. */
+    --color-zinc-50: #f6f7f9;
+    --color-zinc-100: #eceff3;
+    --color-zinc-200: #dde2e8;
+    --color-zinc-300: #c3cad3;
+    --color-zinc-400: #94a0ad;
+    --color-zinc-500: #677585;
+    --color-zinc-600: #4b5866;
+    --color-zinc-700: #36414d;
+    --color-zinc-800: #232c36;
+    --color-zinc-900: #16202b;
+    --color-zinc-950: #0d141c;
+
+    --color-accent: var(--color-signal);
+    --color-accent-content: var(--color-signal);
     --color-accent-foreground: var(--color-white);
 }
 
 @layer theme {
     .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
+        --color-accent: #4f8fdc;
+        --color-accent-content: #8ab6ec;
+        --color-accent-foreground: var(--color-white);
     }
 }
 
@@ -65,6 +77,43 @@ select:focus[data-flux-control] {
     @apply size-4;
 } */
 
+/* Headings: condensed, like the lettering on a safety sign. */
+[data-flux-heading] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 0.005em;
+}
+
+/* The condensed face reads small, so each Flux heading size steps up a little. */
+[data-flux-heading].text-sm {
+    font-size: 1.0625rem;
+}
+
+[data-flux-heading].text-base {
+    font-size: 1.1875rem;
+}
+
+[data-flux-heading].text-2xl {
+    font-size: 1.875rem;
+}
+
+/* Measured values and dates line up in columns. */
+[data-flux-table] {
+    font-variant-numeric: tabular-nums;
+}
+
+/* The sidebar is the blue signal band; it renders its contents in the dark scheme. */
+.signal-band {
+    background-color: var(--color-signal);
+}
+
+/* "You are here": the current sidebar item gets a safety-yellow marker. */
+.signal-band [data-flux-sidebar-item][data-current] {
+    background-color: rgb(255 255 255 / 0.14);
+    color: var(--color-white);
+    box-shadow: inset 3px 0 0 var(--color-safety);
+}
+
 [x-cloak] {
     display: none !important;
 }
@@ -73,10 +122,14 @@ select:focus[data-flux-control] {
 .guide {
     @apply text-sm leading-relaxed text-zinc-700 dark:text-zinc-300;
 }
+h1.guide-title, .guide h1 {
+    font-family: var(--font-display);
+}
 .guide h1 {
     @apply mb-3 text-2xl font-semibold text-zinc-900 dark:text-white;
 }
 .guide h2 {
+    font-family: var(--font-display);
     @apply mt-10 mb-3 scroll-mt-6 border-b border-zinc-200 pb-2 text-lg font-semibold text-zinc-900 dark:border-zinc-700 dark:text-white;
 }
 .guide h3 {

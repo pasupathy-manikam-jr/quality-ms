@@ -19,7 +19,7 @@
             <flux:button size="sm" role="tab" :aria-selected="$state === $value ? 'true' : 'false'"
                 :variant="$state === $value ? 'primary' : 'ghost'" wire:click="$set('state', '{{ $value }}')">
                 {{ $label }}
-                <flux:badge size="sm" class="ms-1">{{ $value === '' ? array_sum($counts) : ($counts[$value] ?? 0) }}</flux:badge>
+                <flux:badge size="sm" @class(['ms-1', '!bg-white/25 !text-white' => $state === $value])>{{ $value === '' ? array_sum($counts) : ($counts[$value] ?? 0) }}</flux:badge>
             </flux:button>
         @endforeach
     </div>

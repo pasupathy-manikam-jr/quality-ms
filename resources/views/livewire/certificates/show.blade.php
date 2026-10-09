@@ -169,7 +169,7 @@
                                 @forelse ($lot->checks() as $check)
                                     <flux:table.row :key="$lot->id.'-'.$check['property']">
                                         <flux:table.cell class="font-medium text-zinc-800 dark:text-white">{{ $check['property'] }}</flux:table.cell>
-                                        <flux:table.cell align="end" @class(['font-semibold text-red-600 dark:text-red-400' => $check['outcome'] === 'fail'])>
+                                        <flux:table.cell align="end" @class(['font-semibold !text-fail dark:!text-red-400' => $check['outcome'] === 'fail'])>
                                             {{ $check['value'] ?? '—' }}
                                         </flux:table.cell>
                                         <flux:table.cell>{{ $check['range'] ? $check['range'].' '.$check['unit'] : '—' }}</flux:table.cell>

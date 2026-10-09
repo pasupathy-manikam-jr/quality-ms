@@ -69,7 +69,7 @@
                     <flux:table.cell align="end">{{ $supplier->certificates_count }}</flux:table.cell>
                     <flux:table.cell align="end">
                         @php($rate = $supplier->acceptanceRate())
-                        <span @class(['font-medium text-red-600 dark:text-red-400' => $rate !== null && $rate < 90])>{{ $rate === null ? '—' : $rate.'%' }}</span>
+                        <span @class(['font-medium !text-fail dark:!text-red-400' => $rate !== null && $rate < 90])>{{ $rate === null ? '—' : $rate.'%' }}</span>
                     </flux:table.cell>
                     <flux:table.cell align="end">
                         @if ($supplier->recent_ncrs_count)

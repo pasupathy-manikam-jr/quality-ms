@@ -19,7 +19,7 @@
             <flux:button size="sm" role="tab" :aria-selected="$status === $value ? 'true' : 'false'"
                 :variant="$status === $value ? 'primary' : 'ghost'" wire:click="$set('status', '{{ $value }}')">
                 {{ $label }}
-                <flux:badge size="sm" class="ms-1">{{ $value === '' ? array_sum($counts) : ($counts[$value] ?? 0) }}</flux:badge>
+                <flux:badge size="sm" @class(['ms-1', '!bg-white/25 !text-white' => $status === $value])>{{ $value === '' ? array_sum($counts) : ($counts[$value] ?? 0) }}</flux:badge>
             </flux:button>
         @endforeach
     </div>
@@ -61,7 +61,7 @@
                     <flux:table.cell>{{ $capa->owner?->name ?? '—' }}</flux:table.cell>
                     <flux:table.cell align="end">{{ $capa->ncrs_count }}</flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">
-                        <span @class(['font-medium text-red-600 dark:text-red-400' => $capa->isOverdue()])>{{ $capa->due_on?->format('Y-m-d') ?? '—' }}</span>
+                        <span @class(['font-medium !text-fail dark:!text-red-400' => $capa->isOverdue()])>{{ $capa->due_on?->format('Y-m-d') ?? '—' }}</span>
                     </flux:table.cell>
                     <flux:table.cell><x-status-badge :status="$capa->status" /></flux:table.cell>
                     <flux:table.cell align="end"><flux:button size="sm" variant="ghost" icon="arrow-right" icon:variant="micro" inset="top bottom" :href="route('capas.show', $capa)" wire:navigate>{{ __('ui_verbs.open') }}</flux:button></flux:table.cell>

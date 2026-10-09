@@ -5,7 +5,7 @@
     $color = match ($status) {
         'verified', 'approved', 'calibrated', 'adjusted', 'disposition-approved', 'acknowledged', 'covered', 'completed', 'opportunity', 'pass', 'passed', 'closed', 'effective', 'active' => 'green',
         'rejected', 'fail', 'failed', 'overdue', 'out-of-service', 'critical', 'major', 'major-nonconformity' => 'red',
-        'received', 'draft', 'open', 'due', 'gap', 'planned', 'minor-nonconformity', 'observation', 'in-review', 'missing', 'in-progress', 'investigating', 'implementing', 'verifying', 'minor' => 'amber',
+        'received', 'draft', 'open', 'due', 'gap', 'planned', 'minor-nonconformity', 'observation', 'in-review', 'missing', 'in-progress', 'investigating', 'implementing', 'verifying', 'minor' => 'yellow',
         'no-limit' => 'orange',
         'superseded', 'cancelled' => 'zinc',
         default => 'zinc',

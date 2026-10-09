@@ -74,7 +74,7 @@
                     <flux:table.cell>{{ $lot->certificate->supplier->name }}</flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">
                         @if ($lot->expires_on)
-                            <span @class(['text-red-600 dark:text-red-400 font-medium' => $lot->isExpired()])>{{ $lot->expires_on->format('Y-m-d') }}</span>
+                            <span @class(['!text-fail dark:!text-red-400 font-medium' => $lot->isExpired()])>{{ $lot->expires_on->format('Y-m-d') }}</span>
                         @else
                             —
                         @endif

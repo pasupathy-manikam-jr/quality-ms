@@ -12,4 +12,6 @@
 @fonts
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
+{{-- Light unless the person picks Dark (or System) under Settings > Appearance. --}}
+<script>try { localStorage.getItem('flux.appearance') || localStorage.setItem('flux.appearance', 'light') } catch (e) {}</script>
 @fluxAppearance

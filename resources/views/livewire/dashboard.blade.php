@@ -7,25 +7,33 @@
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         @foreach ($this->tiles as $tile)
             <a href="{{ route($tile['route'], $tile['query']) }}" wire:navigate wire:key="tile-{{ $loop->index }}"
-                class="rounded-xl border border-zinc-200 p-4 transition hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-700/40">
+                @class([
+                    'rounded-lg border border-s-4 bg-white p-4 transition-colors hover:bg-zinc-50 dark:bg-zinc-800 dark:hover:bg-zinc-700/60',
+                    'border-zinc-200 border-s-zinc-200 dark:border-zinc-700 dark:border-s-zinc-700' => $tile['value'] === 0,
+                    'border-zinc-200 border-s-safety dark:border-zinc-700' => $tile['value'] > 0,
+                ])>
                 <div class="flex items-center justify-between">
                     <flux:text class="text-sm">{{ __($tile['label']) }}</flux:text>
                     <flux:icon :name="$tile['icon']" variant="mini" class="text-zinc-400" />
                 </div>
-                <div @class(['mt-2 text-3xl font-semibold', 'text-zinc-800 dark:text-white' => $tile['value'] === 0, 'text-amber-600 dark:text-amber-400' => $tile['value'] > 0])>{{ $tile['value'] }}</div>
+                <div @class(['font-display mt-2 text-4xl font-bold', 'text-zinc-400 dark:text-zinc-500' => $tile['value'] === 0, 'text-ink dark:text-white' => $tile['value'] > 0])>{{ $tile['value'] }}</div>
             </a>
         @endforeach
     </div>
 
     <div class="space-y-3">
-        <flux:heading>{{ __('Waiting for me') }}</flux:heading>
+        <flux:heading size="lg">{{ __('Waiting for me') }}</flux:heading>
         @forelse ($this->waiting as $item)
             <a href="{{ $item['url'] }}" wire:navigate wire:key="waiting-{{ $loop->index }}"
-                class="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-zinc-200 px-4 py-3 transition hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-700/40">
+                @class([
+                    'flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-s-4 border-zinc-200 bg-white px-4 py-3 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700/60',
+                    'border-s-fail' => $item['overdue'],
+                    'border-s-safety' => ! $item['overdue'],
+                ])>
                 <span class="font-medium text-zinc-800 dark:text-white">{{ $item['label'] }}</span>
                 <span class="min-w-0 flex-1 truncate text-sm text-zinc-500 dark:text-zinc-400">{{ $item['detail'] }}</span>
                 @if ($item['due'])
-                    <span @class(['whitespace-nowrap text-sm', 'font-medium text-red-600 dark:text-red-400' => $item['overdue'], 'text-zinc-500 dark:text-zinc-400' => ! $item['overdue']])>
+                    <span @class(['whitespace-nowrap text-sm', 'font-medium text-fail dark:text-red-400' => $item['overdue'], 'text-zinc-500 dark:text-zinc-400' => ! $item['overdue']])>
                         {{ $item['overdue'] ? __('Overdue since :date', ['date' => $item['due']]) : __('Due :date', ['date' => $item['due']]) }}
                     </span>
                 @endif
