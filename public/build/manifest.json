@@ -1,0 +1,75 @@
+{
+  "_archivo-400-normal-Bl602Mgc.woff": {
+    "file": "assets/archivo-400-normal-Bl602Mgc.woff",
+    "src": "_archivo-400-normal-Bl602Mgc.woff"
+  },
+  "_archivo-400-normal-C81ewxNO.woff2": {
+    "file": "assets/archivo-400-normal-C81ewxNO.woff2",
+    "src": "_archivo-400-normal-C81ewxNO.woff2"
+  },
+  "_archivo-500-normal-CGugC8dq.woff2": {
+    "file": "assets/archivo-500-normal-CGugC8dq.woff2",
+    "src": "_archivo-500-normal-CGugC8dq.woff2"
+  },
+  "_archivo-500-normal-pkzA7jw9.woff": {
+    "file": "assets/archivo-500-normal-pkzA7jw9.woff",
+    "src": "_archivo-500-normal-pkzA7jw9.woff"
+  },
+  "_archivo-600-normal-3BBy0ZsW.woff2": {
+    "file": "assets/archivo-600-normal-3BBy0ZsW.woff2",
+    "src": "_archivo-600-normal-3BBy0ZsW.woff2"
+  },
+  "_archivo-600-normal-DwYieO8P.woff": {
+    "file": "assets/archivo-600-normal-DwYieO8P.woff",
+    "src": "_archivo-600-normal-DwYieO8P.woff"
+  },
+  "_archivo-700-normal-D9cHMWGj.woff2": {
+    "file": "assets/archivo-700-normal-D9cHMWGj.woff2",
+    "src": "_archivo-700-normal-D9cHMWGj.woff2"
+  },
+  "_archivo-700-normal-lT5TFe7H.woff": {
+    "file": "assets/archivo-700-normal-lT5TFe7H.woff",
+    "src": "_archivo-700-normal-lT5TFe7H.woff"
+  },
+  "_archivo-narrow-600-normal-DZkbuzR9.woff": {
+    "file": "assets/archivo-narrow-600-normal-DZkbuzR9.woff",
+    "src": "_archivo-narrow-600-normal-DZkbuzR9.woff"
+  },
+  "_archivo-narrow-600-normal-l2jiltzb.woff2": {
+    "file": "assets/archivo-narrow-600-normal-l2jiltzb.woff2",
+    "src": "_archivo-narrow-600-normal-l2jiltzb.woff2"
+  },
+  "_archivo-narrow-700-normal-DtADLsoy.woff2": {
+    "file": "assets/archivo-narrow-700-normal-DtADLsoy.woff2",
+    "src": "_archivo-narrow-700-normal-DtADLsoy.woff2"
+  },
+  "_archivo-narrow-700-normal-DxmyBkwC.woff": {
+    "file": "assets/archivo-narrow-700-normal-DxmyBkwC.woff",
+    "src": "_archivo-narrow-700-normal-DxmyBkwC.woff"
+  },
+  "_fonts-DoPqnu17.css": {
+    "file": "assets/fonts-DoPqnu17.css",
+    "src": "_fonts-DoPqnu17.css"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-Bmd4ZjjK.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BvRk9kiK.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/passkeys.js": {
+    "file": "assets/passkeys-ZWACIUjA.js",
+    "name": "passkeys",
+    "src": "resources/js/passkeys.js",
+    "isEntry": true
+  }
+}
